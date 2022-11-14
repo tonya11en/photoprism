@@ -34,10 +34,7 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 		return result, useMutex, nil
 	}
 
-	// Display encoder info.
-	if encoder != SoftwareEncoder {
-		log.Infof("convert: ffmpeg encoder %s selected", string(encoder))
-	}
+	log.Infof("convert: ffmpeg encoder %s selected", string(encoder))
 
 	switch encoder {
 	case IntelEncoder:
@@ -161,5 +158,6 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 		)
 	}
 
+	log.Infof("@tallen using ffmpeg cmd: %s", result.String())
 	return result, useMutex, nil
 }
