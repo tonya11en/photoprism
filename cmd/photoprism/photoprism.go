@@ -67,6 +67,7 @@ func main() {
 	app.Commands = commands.PhotoPrism
 	app.Metadata = Metadata
 
+	log.Info("RUNNING TALLEN FORK TROLOLOLOLOLO")
 	if err := app.Run(os.Args); err != nil {
 		log.Error(err)
 	}
