@@ -107,6 +107,10 @@ export const Languages = () => [
     value: "de",
   },
   {
+    text: "Eesti", // Estonian
+    value: "et",
+  },
+  {
     text: "Español", // Spanish
     value: "es",
   },
@@ -214,7 +218,7 @@ export const Languages = () => [
     value: "zh",
   },
   {
-    text: "繁体中文", // Chinese (Traditional)
+    text: "繁體中文", // Chinese (Traditional)
     value: "zh_TW",
   },
   {

@@ -285,6 +285,7 @@ test-coverage:
 	$(info Running all Go tests with code coverage report...)
 	go test -parallel 1 -count 1 -cpu 1 -failfast -tags slow -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/...
 	go tool cover -html=coverage.txt -o coverage.html
+	go tool cover -func coverage.txt  | grep total:
 docker-pull:
 	docker compose pull --ignore-pull-failures
 	docker compose -f docker-compose.latest.yml pull --ignore-pull-failures
@@ -293,7 +294,7 @@ docker-build:
 	docker compose build
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
-docker-develop-latest: docker-develop-ubuntu docker-develop-armv7
+docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
 docker-develop-ubuntu: docker-develop-jammy docker-develop-jammy-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
