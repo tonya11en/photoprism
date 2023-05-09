@@ -128,7 +128,7 @@ export default {
         complete: false,
         open: false,
         dirty: false,
-        batchSize: batchSize > 160 ? 480 : batchSize * 3
+        batchSize: batchSize * 4,
       },
     };
   },
@@ -537,7 +537,7 @@ export default {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), {n: this.results.length}));
           }
         } else {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 50}));
+          this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));
 
           this.$nextTick(() => {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {

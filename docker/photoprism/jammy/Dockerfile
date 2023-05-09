@@ -1,10 +1,10 @@
 ##################################################### BUILD STAGE ######################################################
 FROM photoprism/develop:jammy as build
 
-# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
-# more about our team, products and services: https://photoprism.app/
+# more about our team, products and services: https://www.photoprism.app/
 
 # Declare build parameters.
 ARG TARGETARCH
@@ -25,12 +25,12 @@ FROM ubuntu:jammy
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Community Edition (Ubuntu 22.04 LTS)"
+LABEL org.opencontainers.image.title="PhotoPrism® (Ubuntu 22.04 LTS)"
 LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
-LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
 # Declare build parameters.

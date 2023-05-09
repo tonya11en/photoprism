@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -31,7 +31,11 @@ import { $gettext } from "common/vm";
 
 export class Rest extends Model {
   getId() {
-    return this.UID ? this.UID : this.ID;
+    if (this.UID) {
+      return this.UID;
+    }
+
+    return this.ID ? this.ID : false;
   }
 
   hasId() {
@@ -49,6 +53,16 @@ export class Rest extends Model {
   find(id, params) {
     return Api.get(this.getEntityResource(id), params).then((resp) =>
       Promise.resolve(new this.constructor(resp.data))
+    );
+  }
+
+  load() {
+    if (!this.hasId()) {
+      return;
+    }
+
+    return Api.get(this.getEntityResource(this.getId())).then((resp) =>
+      Promise.resolve(this.setValues(resp.data))
     );
   }
 
@@ -72,7 +86,7 @@ export class Rest extends Model {
     }
 
     // Send PUT request.
-    return Api.put(this.getEntityResource(), this.getValues(true)).then((resp) =>
+    return Api.put(this.getEntityResource(), values).then((resp) =>
       Promise.resolve(this.setValues(resp.data))
     );
   }

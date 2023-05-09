@@ -1,15 +1,10 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:28+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
 "backend/it/>\n"
 "Language: it\n"
@@ -17,15 +12,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Errore, si prega di riprovare"
+msgid "Something went wrong, try again"
+msgstr "Qualcosa è andato storto, riprovare"
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Richiesta non valida"
+msgid "Unable to do that"
+msgstr "Impossibile farlo"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -187,7 +182,7 @@ msgstr "Non è stato possibile collegare l'account"
 
 #: messages.go:137
 msgid "Changes successfully saved"
-msgstr "Le modifiche sono state salvate correttamente"
+msgstr "Modifiche salvate con successo"
 
 #: messages.go:138
 msgid "Album created"
@@ -375,6 +370,12 @@ msgstr "Eliminato permanentemente"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s è stato ripristinato"
+
+#~ msgid "Invalid request"
+#~ msgstr "Richiesta non valida"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Errore, si prega di riprovare"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "Non trovato nel server, eliminato?"

@@ -1,7 +1,7 @@
 /*
 Package i18n provides translatable notification and error messages.
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -14,7 +14,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
 	The AGPL is supplemented by our Trademark and Brand Guidelines,
 	which describe how our Brand Assets may be used:
-	<https://photoprism.app/trademark>
+	<https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -50,10 +50,17 @@ func msgParams(msg string, params ...interface{}) string {
 	return msg
 }
 
+// Msg returns a translated message string.
 func Msg(id Message, params ...interface{}) string {
 	return msgParams(gotext.Get(Messages[id]), params...)
 }
 
+// Error returns a translated error message.
 func Error(id Message, params ...interface{}) error {
 	return errors.New(Msg(id, params...))
+}
+
+// Lower returns the untranslated message as a lowercase string for use in logs.
+func Lower(id Message, params ...interface{}) string {
+	return strings.ToLower(msgParams(Messages[id], params...))
 }

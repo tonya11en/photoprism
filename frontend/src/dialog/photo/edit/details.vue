@@ -15,7 +15,7 @@
               <v-img v-touch="{left, right}"
                      :src="model.thumbnailUrl('tile_500')"
                      aspect-ratio="1"
-                     class="accent lighten-2 elevation-0 clickable"
+                     class="card darken-1 elevation-0 clickable"
                      @click.exact="openPhoto()"
               >
               </v-img>
@@ -31,7 +31,7 @@
                     :disabled="disabled"
                     :rules="[textRule]"
                     hide-details box flat
-                    :label="$gettext('Title')"
+                    :label="$pgettext('Photo', 'Title')"
                     placeholder=""
                     color="secondary-dark"
                     browser-autocomplete="off"
@@ -187,6 +187,7 @@
                     :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :label="$gettext('Camera')"
+                    :menu-props="{'maxHeight':346}"
                     browser-autocomplete="off"
                     hide-details box flat
                     color="secondary-dark"
@@ -233,6 +234,7 @@
                     :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                     :disabled="disabled"
                     :label="$gettext('Lens')"
+                    :menu-props="{'maxHeight':346}"
                     browser-autocomplete="off"
                     hide-details box flat
                     color="secondary-dark"

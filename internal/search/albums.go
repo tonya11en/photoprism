@@ -5,11 +5,13 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -29,7 +31,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 	// Base query.
 	s := UnscopedDb().Table("albums").
-		Select("albums.*, cp.photo_count, cl.link_count, CASE WHEN albums.album_year = 0 THEN 0 ELSE 1 END AS has_year").
+		Select("albums.*, cp.photo_count, cl.link_count, CASE WHEN albums.album_year = 0 THEN 0 ELSE 1 END AS has_year, CASE WHEN albums.album_location = '' THEN 1 ELSE 0 END AS no_location").
 		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 AND missing = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
 		Where("albums.deleted_at IS NULL")
@@ -42,7 +44,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		// Determine resource to check.
 		var aclResource acl.Resource
 		switch f.Type {
-		case entity.AlbumDefault:
+		case entity.AlbumManual:
 			aclResource = acl.ResourceAlbums
 		case entity.AlbumFolder:
 			aclResource = acl.ResourceFolders
@@ -63,11 +65,11 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		if sess.IsVisitor() || sess.NotRegistered() {
 			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.TimeStamp())
 		} else if acl.Resources.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
-			if user.BasePath == "" {
+			if basePath := user.GetBasePath(); basePath == "" {
 				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.TimeStamp())
 			} else {
 				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ? OR albums.album_type = ? AND (albums.album_path = ? OR albums.album_path LIKE ?)",
-					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), entity.AlbumFolder, user.BasePath, user.BasePath+"/%")
+					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), entity.AlbumFolder, basePath, basePath+"/%")
 			}
 		}
 
@@ -80,28 +82,56 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 	// Set sort order.
 	switch f.Order {
-	case entity.SortOrderCount:
+	case sortby.Count:
 		s = s.Order("photo_count DESC, albums.album_title, albums.album_uid DESC")
-	case entity.SortOrderRelevance:
-		s = s.Order("albums.album_favorite DESC, albums.updated_at DESC, albums.album_uid DESC")
-	case entity.SortOrderNewest:
-		s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
-	case entity.SortOrderOldest:
-		s = s.Order("albums.album_favorite DESC, albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
-	case entity.SortOrderAdded:
+	case sortby.Moment, sortby.Newest:
+		if f.Type == entity.AlbumManual || f.Type == entity.AlbumState {
+			s = s.Order("albums.album_uid DESC")
+		} else if f.Type == entity.AlbumMoment {
+			s = s.Order("has_year, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
+		} else {
+			s = s.Order("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
+		}
+	case sortby.Oldest:
+		if f.Type == entity.AlbumManual || f.Type == entity.AlbumState {
+			s = s.Order("albums.album_uid ASC")
+		} else if f.Type == entity.AlbumMoment {
+			s = s.Order("has_year, albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
+		} else {
+			s = s.Order("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
+		}
+	case sortby.Added:
 		s = s.Order("albums.album_uid DESC")
-	case entity.SortOrderMoment:
-		s = s.Order("albums.album_favorite DESC, has_year, albums.album_year DESC, albums.album_month DESC, albums.album_title ASC, albums.album_uid DESC")
-	case entity.SortOrderPlace:
-		s = s.Order("albums.album_favorite DESC, albums.album_location, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
-	case entity.SortOrderPath:
+	case sortby.Edited:
+		s = s.Order("albums.updated_at DESC, albums.album_uid DESC")
+	case sortby.Place:
+		s = s.Order("no_location, albums.album_location, has_year, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid DESC")
+	case sortby.Path:
 		s = s.Order("albums.album_path, albums.album_uid DESC")
-	case entity.SortOrderCategory:
+	case sortby.Category:
 		s = s.Order("albums.album_category, albums.album_title, albums.album_uid DESC")
-	case entity.SortOrderSlug:
-		s = s.Order("albums.album_favorite DESC, albums.album_slug ASC, albums.album_uid DESC")
-	case entity.SortOrderName:
-		s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
+	case sortby.Slug:
+		s = s.Order("albums.album_slug ASC, albums.album_uid DESC")
+	case sortby.Favorites:
+		if f.Type == entity.AlbumFolder {
+			s = s.Order("albums.album_favorite DESC, albums.album_path ASC, albums.album_uid DESC")
+		} else if f.Type == entity.AlbumMonth {
+			s = s.Order("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
+		} else {
+			s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
+		}
+	case sortby.Name:
+		if f.Type == entity.AlbumFolder {
+			s = s.Order("albums.album_path ASC, albums.album_uid DESC")
+		} else {
+			s = s.Order("albums.album_title ASC, albums.album_uid DESC")
+		}
+	case sortby.NameReverse:
+		if f.Type == entity.AlbumFolder {
+			s = s.Order("albums.album_path DESC, albums.album_uid DESC")
+		} else {
+			s = s.Order("albums.album_title DESC, albums.album_uid DESC")
+		}
 	default:
 		s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
 	}
@@ -121,34 +151,16 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 			likeString := "%" + f.Query + "%"
 			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", likeString, likeString)
 		} else {
-			f.Order = entity.SortOrderPath
-
-			p := f.Query
-
-			if strings.HasPrefix(p, "/") {
-				p = p[1:]
-			}
-
-			if strings.HasSuffix(p, "/") {
-				s = s.Where("albums.album_path = ?", p[:len(p)-1])
-			} else {
-				p = p + "*"
-
-				where, values := OrLike("albums.album_path", p)
-
-				if w, v := OrLike("albums.album_title", p); len(v) > 0 {
-					where = where + " OR " + w
-					values = append(values, v...)
-				}
-
-				s = s.Where(where, values...)
+			searchQuery := strings.Trim(strings.ReplaceAll(f.Query, "\\", "/"), "/")
+			for _, where := range LikeAllNames(Cols{"albums.album_title", "albums.album_location", "albums.album_path"}, searchQuery) {
+				s = s.Where(where)
 			}
 		}
 	}
 
 	// Albums with public pictures only?
 	if f.Public {
-		s = s.Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL)")
+		s = s.Where("albums.album_private = 0 AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL))")
 	} else {
 		s = s.Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_quality > -1 AND deleted_at IS NULL)")
 	}
@@ -169,20 +181,32 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		s = s.Where("albums.album_country IN (?)", strings.Split(f.Country, txt.Or))
 	}
 
+	// Favorites only?
 	if f.Favorite {
 		s = s.Where("albums.album_favorite = 1")
 	}
 
-	if (f.Year > 0 && f.Year <= txt.YearMax) || f.Year == entity.UnknownYear {
-		s = s.Where("albums.album_year = ?", f.Year)
+	// Filter by year?
+	if txt.NotEmpty(f.Year) {
+		// Filter by the pictures included if it is a manually managed album, as these do not have an explicit
+		// year assigned to them, unlike calendar albums and moments for example.
+		if f.Type == entity.AlbumManual {
+			s = s.Where("? OR albums.album_uid IN (SELECT DISTINCT pay.album_uid FROM photos_albums pay "+
+				"JOIN photos py ON pay.photo_uid = py.photo_uid WHERE py.photo_year IN (?) AND pay.hidden = 0 AND pay.missing = 0)",
+				gorm.Expr(AnyInt("albums.album_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax)), strings.Split(f.Year, txt.Or))
+		} else {
+			s = s.Where(AnyInt("albums.album_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax))
+		}
 	}
 
-	if (f.Month >= txt.MonthMin && f.Month <= txt.MonthMax) || f.Month == entity.UnknownMonth {
-		s = s.Where("albums.album_month = ?", f.Month)
+	// Filter by month?
+	if txt.NotEmpty(f.Month) {
+		s = s.Where(AnyInt("albums.album_month", f.Month, txt.Or, entity.UnknownMonth, txt.MonthMax))
 	}
 
-	if (f.Day >= txt.DayMin && f.Month <= txt.DayMax) || f.Day == entity.UnknownDay {
-		s = s.Where("albums.album_day = ?", f.Day)
+	// Filter by day?
+	if txt.NotEmpty(f.Day) {
+		s = s.Where(AnyInt("albums.album_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
 	}
 
 	// Limit result count.

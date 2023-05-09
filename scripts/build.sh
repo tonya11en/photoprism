@@ -20,21 +20,21 @@ GO_VER=$($GO_BIN version)
 echo "Building PhotoPrism ${BUILD_ID} ($1)..."
 
 if [[ $1 == "debug" ]]; then
-  BUILD_CMD=("$GO_BIN" build -ldflags "-X main.version=${BUILD_ID}-DEBUG" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
+  BUILD_CMD=("$GO_BIN" build -tags=debug -ldflags "-X main.version=${BUILD_ID}-DEBUG" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 elif [[ $1 == "race" ]]; then
-  BUILD_CMD=("$GO_BIN" build -race -ldflags "-X main.version=${BUILD_ID}-DEBUG" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
+  BUILD_CMD=("$GO_BIN" build -tags=debug -race -ldflags "-X main.version=${BUILD_ID}-DEBUG" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 elif [[ $1 == "static" ]]; then
   BUILD_CMD=("$GO_BIN" build -a -v -ldflags "-linkmode external -extldflags \"-static -L /usr/lib -ltensorflow\" -s -w -X main.version=${BUILD_ID}" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 else
   BUILD_CMD=("$GO_BIN" build -ldflags "-extldflags \"-Wl,-rpath -Wl,\$ORIGIN/../lib\" -s -w -X main.version=${BUILD_ID}" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
 fi
 
-# build binary
+# Build app binary.
 echo "=> compiling \"$BUILD_BIN\" with \"${GO_VER}\""
 echo "=> ${BUILD_CMD[*]}"
 "${BUILD_CMD[@]}"
 
-# show size
+# Display binary size.
 du -h "${BUILD_BIN}"
 
 echo "Done."

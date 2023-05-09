@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -33,13 +33,14 @@ import Labels from "page/labels.vue";
 import People from "page/people.vue";
 import Library from "page/library.vue";
 import Settings from "page/settings.vue";
-import Login from "page/login.vue";
-import Connect from "page/connect.vue";
+import Admin from "page/admin.vue";
+import Login from "page/auth/login.vue";
 import Discover from "page/discover.vue";
 import About from "page/about/about.vue";
 import Feedback from "page/about/feedback.vue";
 import License from "page/about/license.vue";
 import Help from "page/help.vue";
+import Connect from "page/connect.vue";
 import { $gettext } from "common/vm";
 import { config, session } from "./session";
 
@@ -56,19 +57,19 @@ export default [
     name: "about",
     path: "/about",
     component: About,
-    meta: { title: siteTitle, auth: false },
+    meta: { title: $gettext("About"), auth: false },
   },
   {
     name: "license",
     path: "/license",
     component: License,
-    meta: { title: siteTitle, auth: false },
+    meta: { title: $gettext("License"), auth: false },
   },
   {
     name: "feedback",
     path: "/feedback",
     component: Feedback,
-    meta: { title: siteTitle, auth: true },
+    meta: { title: $gettext("Help & Support"), auth: true },
   },
   {
     name: "help",
@@ -92,8 +93,31 @@ export default [
     },
   },
   {
+    name: "admin",
+    path: "/admin/*",
+    component: Admin,
+    meta: {
+      title: $gettext("Settings"),
+      auth: true,
+      admin: true,
+      settings: true,
+      background: "application-light",
+    },
+  },
+  {
+    name: "upgrade",
+    path: "/upgrade",
+    component: Connect,
+    meta: {
+      title: siteTitle,
+      auth: true,
+      admin: true,
+      settings: true,
+    },
+  },
+  {
     name: "connect",
-    path: "/connect/:name/:token",
+    path: "/upgrade/:token",
     component: Connect,
     meta: {
       title: siteTitle,
@@ -136,7 +160,7 @@ export default [
     path: "/moments",
     component: Albums,
     meta: { title: $gettext("Moments"), auth: true },
-    props: { view: "moment", staticFilter: { type: "moment", order: "moment" } },
+    props: { view: "moment", defaultOrder: "newest", staticFilter: { type: "moment" } },
   },
   {
     name: "moment",
@@ -149,7 +173,7 @@ export default [
     path: "/albums",
     component: Albums,
     meta: { title: $gettext("Albums"), auth: true },
-    props: { view: "album", staticFilter: { type: "album", order: "name" } },
+    props: { view: "album", defaultOrder: "favorites", staticFilter: { type: "album" } },
   },
   {
     name: "album",
@@ -162,7 +186,7 @@ export default [
     path: "/calendar",
     component: Albums,
     meta: { title: $gettext("Calendar"), auth: true },
-    props: { view: "month", staticFilter: { type: "month", order: "newest" } },
+    props: { view: "month", defaultOrder: "newest", staticFilter: { type: "month" } },
   },
   {
     name: "month",
@@ -175,7 +199,7 @@ export default [
     path: "/folders",
     component: Albums,
     meta: { title: $gettext("Folders"), auth: true },
-    props: { view: "folder", staticFilter: { type: "folder", order: "newest" } },
+    props: { view: "folder", defaultOrder: "name", staticFilter: { type: "folder" } },
   },
   {
     name: "folder",
@@ -255,7 +279,7 @@ export default [
     path: "/states",
     component: Albums,
     meta: { title: $gettext("Places"), auth: true },
-    props: { view: "state", staticFilter: { type: "state", order: "place" } },
+    props: { view: "state", defaultOrder: "place", staticFilter: { type: "state" } },
   },
   {
     name: "state",

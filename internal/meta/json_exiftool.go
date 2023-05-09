@@ -100,7 +100,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					continue
 				}
 
-				fieldValue.Set(reflect.ValueOf(StringToDuration(jsonValue.String())))
+				fieldValue.Set(reflect.ValueOf(Duration(jsonValue.String())))
 			case int, int64:
 				if !fieldValue.IsZero() {
 					continue
@@ -118,7 +118,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 				if f := jsonValue.Float(); f != 0 {
 					fieldValue.SetFloat(f)
-				} else if f = txt.Float64(jsonValue.String()); f != 0 {
+				} else if f = txt.Float(jsonValue.String()); f != 0 {
 					fieldValue.SetFloat(f)
 				}
 			case uint, uint64:
@@ -174,10 +174,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	// Set latitude and longitude if known and not already set.
 	if data.Lat == 0 && data.Lng == 0 {
 		if data.GPSPosition != "" {
-			data.Lat, data.Lng = GpsToLatLng(data.GPSPosition)
+			lat, lng := GpsToLatLng(data.GPSPosition)
+			data.Lat, data.Lng = NormalizeGPS(lat, lng)
 		} else if data.GPSLatitude != "" && data.GPSLongitude != "" {
-			data.Lat = GpsToDecimal(data.GPSLatitude)
-			data.Lng = GpsToDecimal(data.GPSLongitude)
+			data.Lat, data.Lng = NormalizeGPS(GpsToDecimal(data.GPSLatitude), GpsToDecimal(data.GPSLongitude))
 		}
 	}
 
@@ -186,7 +186,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		if fl := GpsFloatRegexp.FindAllString(data.json["GPSAltitude"], -1); len(fl) != 1 {
 			// Ignore.
 		} else if alt, err := strconv.ParseFloat(fl[0], 64); err == nil && alt != 0 {
-			data.Altitude = int(alt)
+			data.Altitude = alt
 		}
 	}
 

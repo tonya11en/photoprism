@@ -1,15 +1,10 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:22+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"POT-Creation-Date: 2023-03-09 13:14+0000\n"
+"PO-Revision-Date: 2023-04-03 08:26+0000\n"
+"Last-Translator: Joao Jesus <johncjesus@gmail.com>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/"
 "photoprism/backend/pt/>\n"
 "Language: pt\n"
@@ -17,15 +12,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.16.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Erro inesperado, por favor tente novamente"
+msgid "Something went wrong, try again"
+msgstr "Algo correu mal, tente novamente"
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Solicitação inválida"
+msgid "Unable to do that"
+msgstr "Incapaz de fazer isso"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -174,7 +169,7 @@ msgstr "Nome inválido"
 
 #: messages.go:132
 msgid "Busy, please try again later"
-msgstr "Ocupado, por favor tente mais tarde"
+msgstr "Em uso, por favor tente novamente mais tarde"
 
 #: messages.go:133
 #, c-format
@@ -336,7 +331,7 @@ msgstr "%d arquivos enviados em %d"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr "Processamento de upload..."
+msgstr "A processar carregamento..."
 
 #: messages.go:172
 msgid "Upload has been processed"
@@ -375,6 +370,12 @@ msgstr "Permanentemente excluídas"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s foi restaurado"
+
+#~ msgid "Invalid request"
+#~ msgstr "Solicitação inválida"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Erro inesperado, por favor tente novamente"
 
 #~ msgid "Not found on server, deleted?"
 #~ msgstr "Não foi encontrado no servidor, foi excluído?"

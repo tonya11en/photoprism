@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/server/header"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -77,9 +78,28 @@ func (c *Config) HttpMode() string {
 	return c.options.HttpMode
 }
 
-// HttpCompression returns the http compression method (none or gzip).
+// HttpCompression returns the http compression method (gzip, or none).
 func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
+}
+
+// HttpCacheMaxAge returns the time in seconds until cached content expires.
+func (c *Config) HttpCacheMaxAge() thumb.MaxAge {
+	if c.options.HttpCacheMaxAge < 1 || c.options.HttpCacheMaxAge > 31536000 {
+		// Default to one month.
+		return thumb.CacheMaxAge
+	}
+
+	return thumb.MaxAge(c.options.HttpCacheMaxAge)
+}
+
+// HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
+func (c *Config) HttpCachePublic() bool {
+	if c.options.HttpCachePublic {
+		return true
+	}
+
+	return c.options.CdnUrl != ""
 }
 
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
@@ -107,8 +127,10 @@ func (c *Config) TemplatesPath() string {
 
 // CustomTemplatesPath returns the path to custom templates.
 func (c *Config) CustomTemplatesPath() string {
-	if p := c.CustomAssetsPath(); p != "" {
-		return filepath.Join(p, "templates")
+	if dir := c.CustomAssetsPath(); dir == "" {
+		return ""
+	} else if dir = filepath.Join(dir, "templates"); fs.PathExists(dir) {
+		return dir
 	}
 
 	return ""
@@ -118,10 +140,22 @@ func (c *Config) CustomTemplatesPath() string {
 func (c *Config) TemplateFiles() []string {
 	results := make([]string, 0, 32)
 
-	tmplPaths := []string{c.TemplatesPath(), c.CustomTemplatesPath()}
+	var tmplPaths []string
 
-	for _, p := range tmplPaths {
-		matches, err := filepath.Glob(regexp.QuoteMeta(p) + "/[A-Za-z0-9]*.*")
+	// Path set for custom templates?
+	if cDir := c.CustomTemplatesPath(); cDir != "" {
+		tmplPaths = []string{c.TemplatesPath(), cDir}
+	} else {
+		tmplPaths = []string{c.TemplatesPath()}
+	}
+
+	// Find template files.
+	for _, dir := range tmplPaths {
+		if dir == "" {
+			continue
+		}
+
+		matches, err := filepath.Glob(regexp.QuoteMeta(dir) + "/[A-Za-z0-9]*.*")
 
 		if err != nil {
 			continue
@@ -139,8 +173,8 @@ func (c *Config) TemplateFiles() []string {
 func (c *Config) TemplateExists(name string) bool {
 	if found := fs.FileExists(filepath.Join(c.TemplatesPath(), name)); found {
 		return true
-	} else if p := c.CustomTemplatesPath(); p != "" {
-		return fs.FileExists(filepath.Join(p, name))
+	} else if dir := c.CustomTemplatesPath(); dir != "" {
+		return fs.FileExists(filepath.Join(dir, name))
 	} else {
 		return false
 	}

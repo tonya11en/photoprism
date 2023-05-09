@@ -3,11 +3,10 @@ package config
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/customize"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -17,6 +16,10 @@ func TestConfig_ClientConfig(t *testing.T) {
 		result := c.ClientPublic()
 		assert.IsType(t, ClientConfig{}, result)
 		assert.Equal(t, AuthModePublic, result.AuthMode)
+		assert.Equal(t, "/library/browse", result.LoginUri)
+		assert.Equal(t, "", result.RegisterUri)
+		assert.Equal(t, 0, result.PasswordLength)
+		assert.Equal(t, "", result.PasswordResetUri)
 		assert.Equal(t, true, result.Public)
 	})
 	t.Run("TestErrorConfig", func(t *testing.T) {
@@ -58,7 +61,7 @@ func TestConfig_ClientConfig(t *testing.T) {
 		assert.LessOrEqual(t, 20, cfg.Count.Photos)
 		assert.LessOrEqual(t, 1, cfg.Count.Live)
 		assert.LessOrEqual(t, 4, cfg.Count.Videos)
-		assert.LessOrEqual(t, cfg.Count.Photos+cfg.Count.Live+cfg.Count.Videos, cfg.Count.All)
+		assert.LessOrEqual(t, cfg.Count.Photos+cfg.Count.Live+cfg.Count.Videos-cfg.Count.Review, cfg.Count.All)
 		assert.LessOrEqual(t, 6, cfg.Count.Cameras)
 		assert.LessOrEqual(t, 1, cfg.Count.Lenses)
 		assert.LessOrEqual(t, 13, cfg.Count.Review)

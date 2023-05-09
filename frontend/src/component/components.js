@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -39,7 +39,12 @@ import PAlbumToolbar from "component/album/toolbar.vue";
 import PLabelClipboard from "component/label/clipboard.vue";
 import PFileClipboard from "component/file/clipboard.vue";
 import PSubjectClipboard from "component/subject/clipboard.vue";
+import PAuthHeader from "component/auth/header.vue";
+import PAuthFooter from "component/auth/footer.vue";
 import PAboutFooter from "component/footer.vue";
+import IconLivePhoto from "component/icon/live-photo.vue";
+import IconSponsor from "component/icon/sponsor.vue";
+import IconPrism from "component/icon/prism.vue";
 
 const components = {};
 
@@ -60,7 +65,12 @@ components.install = (Vue) => {
   Vue.component("PLabelClipboard", PLabelClipboard);
   Vue.component("PFileClipboard", PFileClipboard);
   Vue.component("PSubjectClipboard", PSubjectClipboard);
+  Vue.component("PAuthHeader", PAuthHeader);
+  Vue.component("PAuthFooter", PAuthFooter);
   Vue.component("PAboutFooter", PAboutFooter);
+  Vue.component("IconLivePhoto", IconLivePhoto);
+  Vue.component("IconSponsor", IconSponsor);
+  Vue.component("IconPrism", IconPrism);
 };
 
 export default components;

@@ -1,19 +1,19 @@
 #### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
 FROM ubuntu:jammy
 
-# Copyright © 2018 - 2022 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
-# more about our team, products and services: https://photoprism.app/
+# more about our team, products and services: https://www.photoprism.app/
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Dev (ARMv7)"
+LABEL org.opencontainers.image.title="PhotoPrism® Build Image (ARMv7)"
 LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
-LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
 # Declare build parameters.
@@ -47,6 +47,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
+    echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
     apt-get update && apt-get -qq upgrade && apt-get -qq install --no-install-recommends \
         apt-utils gpg pkg-config software-properties-common ca-certificates avahi-utils \
         build-essential gcc g++ sudo bash make nano lsof lshw git jq \
@@ -55,7 +56,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 \
         libfontconfig1-dev libhdf5-serial-dev libpng-dev libzmq3-dev \
         libx264-dev libx265-dev libde265-dev libaom-dev libnss3 libxtst6 librsvg2-bin tzdata \
-        exiftool ffmpeg ffmpegthumbnailer libavcodec-extra \
+        exiftool ffmpeg libavcodec-extra \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \

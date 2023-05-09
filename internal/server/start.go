@@ -43,13 +43,15 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Register common middleware.
 	router.Use(Recovery(), Security(conf), Logger())
 
+	// Create REST API router group.
+	APIv1 = router.Group(conf.BaseUri(config.ApiUri))
+
 	// Initialize package extensions.
 	Ext().Init(router, conf)
 
 	// Enable HTTP compression?
 	switch conf.HttpCompression() {
 	case "gzip":
-		log.Infof("server: enabling gzip compression")
 		router.Use(gzip.Gzip(
 			gzip.DefaultCompression,
 			gzip.WithExcludedPaths([]string{
@@ -60,6 +62,7 @@ func Start(ctx context.Context, conf *config.Config) {
 				conf.BaseUri(config.ApiUri + "/labels"),
 				conf.BaseUri(config.ApiUri + "/videos"),
 			})))
+		log.Infof("server: enabled gzip compression")
 	}
 
 	// Find and load templates.

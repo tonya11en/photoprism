@@ -4,15 +4,15 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // DeleteFile removes a file from storage.
@@ -67,6 +67,9 @@ func DeleteFile(router *gin.RouterGroup) {
 			AbortEntityNotFound(c)
 			return
 		}
+
+		// Report file deletion.
+		event.AuditWarn([]string{ClientIP(c), s.UserName, "delete", file.FileName})
 
 		// Remove file from storage.
 		if err = mediaFile.Remove(); err != nil {

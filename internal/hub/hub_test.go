@@ -82,10 +82,12 @@ func TestConfig_Refresh(t *testing.T) {
 		assert.Len(t, c.Secret, 32)
 		assert.Equal(t, "0.0.0", c.Version)
 
-		if sess, err := c.DecodeSession(); err != nil {
+		if sess, err := c.DecodeSession(false); err != nil {
 			t.Fatal(err)
 		} else if sess.Expired() {
 			t.Fatalf("session expired: %+v", sess)
+		} else {
+			t.Logf("(1) session: %#v", sess)
 		}
 
 		if err := c.Save(); err != nil {
@@ -104,18 +106,18 @@ func TestConfig_Refresh(t *testing.T) {
 		assert.Len(t, c.Secret, 32)
 		assert.Equal(t, "0.0.0", c.Version)
 
-		if sess, err := c.DecodeSession(); err != nil {
+		if sess, err := c.DecodeSession(false); err != nil {
 			t.Fatal(err)
 		} else if sess.Expired() {
 			t.Fatal("session expired")
 		} else {
-			t.Logf("api session: %+v", sess)
+			t.Logf("(2) session: %#v", sess)
 		}
 
 		if err := c.Save(); err != nil {
 			t.Fatal(err)
 		}
-
+		t.Logf("filename: %s", fileName)
 		assert.FileExists(t, fileName)
 	})
 }
@@ -131,7 +133,7 @@ func TestConfig_DecodeSession(t *testing.T) {
 		assert.Equal(t, "8dd8b115d052f91ac74b1c2475e305009366c487", c.Key)
 		assert.Equal(t, "ddf4ce46afbf6c16a6bd8555ab1e4efb", c.Secret)
 		assert.Equal(t, "7607796238c26b2d95007957b05c72d63f504346576bc2aa064a6dc54344de47d2ab38422bd1d061c067a16ef517e6054d8b7f5336c120431935518277fed45e49472aaf740cac1bc33ab2e362c767007a59e953e9973709", c.Session)
-		assert.Equal(t, "unregistered", c.Status)
+		assert.Equal(t, Status("unregistered"), c.Status)
 		assert.Equal(t, "0.0.0", c.Version)
 	})
 }
@@ -147,7 +149,7 @@ func TestConfig_Load(t *testing.T) {
 		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
-		assert.Equal(t, "unregistered", c.Status)
+		assert.Equal(t, Status("unregistered"), c.Status)
 		assert.Equal(t, "0.0.0", c.Version)
 	})
 	t.Run("hub2.yml", func(t *testing.T) {
@@ -160,7 +162,7 @@ func TestConfig_Load(t *testing.T) {
 		assert.Equal(t, "ab66cb5cfb3658dbea0a1433df048d900934ac68", c.Key)
 		assert.Equal(t, "6b0f8440fe307d3120b3a4366350094b", c.Secret)
 		assert.Equal(t, "c0ca88fc3094b70a1947b5b10f980a420cd6b1542a20f6f26ecc6a16f340473b9fb16b80be1078e86d886b3a8d46bf8184d147", c.Session)
-		assert.Equal(t, "unregistered", c.Status)
+		assert.Equal(t, Status("unregistered"), c.Status)
 		assert.Equal(t, "200925-f8e2b580-Darwin-i386-DEBUG", c.Version)
 	})
 	t.Run("not existing filename", func(t *testing.T) {
@@ -189,7 +191,7 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
-		assert.Equal(t, "unregistered", c.Status)
+		assert.Equal(t, Status("unregistered"), c.Status)
 		assert.Equal(t, "0.0.0", c.Version)
 
 		c.FileName = "testdata/hub-save.yml"
@@ -203,7 +205,7 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
-		assert.Equal(t, "unregistered", c.Status)
+		assert.Equal(t, Status("unregistered"), c.Status)
 		assert.Equal(t, "0.0.0", c.Version)
 
 		assert.FileExists(t, "testdata/hub-save.yml")
@@ -215,7 +217,7 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)
 		assert.Equal(t, "3ef5685c6391a568731c8fc94ccad82d92dea60476c8b672990047c822248f45366fc0e8e812ad15e0b5ae1eb20e866235c56b", c.Session)
-		assert.Equal(t, "unregistered", c.Status)
+		assert.Equal(t, Status("unregistered"), c.Status)
 		assert.Equal(t, "0.0.0", c.Version)
 	})
 	t.Run("not existing filename", func(t *testing.T) {

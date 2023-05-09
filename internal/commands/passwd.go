@@ -14,17 +14,32 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// PasswdCommand updates a password.
+// PasswdCommand configures the command name, flags, and action.
 var PasswdCommand = cli.Command{
-	Name:   "passwd",
-	Usage:  "Changes the admin account password",
+	Name:      "passwd",
+	Usage:     "Changes the password of the user specified as argument",
+	ArgsUsage: "[username]",
+	Flags: []cli.Flag{
+		cli.BoolFlag{
+			Name:  "show, s",
+			Usage: "show bcrypt password hash",
+		},
+	},
 	Action: passwdAction,
 }
 
-// passwdAction updates a password.
+// passwdAction changes the password of the user specified as command argument.
 func passwdAction(ctx *cli.Context) error {
+	id := clean.Username(ctx.Args().First())
+
+	// Name or UID provided?
+	if id == "" {
+		return cli.ShowSubcommandHelp(ctx)
+	}
+
 	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
@@ -37,9 +52,22 @@ func passwdAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	user := entity.Admin
+	// Find user record.
+	var m *entity.User
 
-	log.Infof("please enter a new password for %s (mininum 8 characters)\n", clean.Log(user.Name()))
+	if rnd.IsUID(id, entity.UserUID) {
+		m = entity.FindUserByUID(id)
+	} else {
+		m = entity.FindUserByName(id)
+	}
+
+	if m == nil {
+		return fmt.Errorf("user %s not found", clean.LogQuote(id))
+	} else if m.Deleted() {
+		return fmt.Errorf("user %s has been deleted", clean.LogQuote(id))
+	}
+
+	log.Infof("please enter a new password for %s (minimum %d characters)\n", clean.Log(m.Username()), entity.PasswordLength)
 
 	newPassword := getPassword("New Password: ")
 
@@ -53,11 +81,16 @@ func passwdAction(ctx *cli.Context) error {
 		return errors.New("passwords did not match, please try again")
 	}
 
-	if err := user.SetPassword(newPassword); err != nil {
+	if err = m.SetPassword(newPassword); err != nil {
 		return err
 	}
 
-	log.Infof("changed password for %s\n", clean.Log(user.Name()))
+	// Show bcrypt password hash?
+	if pw := entity.FindPassword(m.UserUID); ctx.Bool("show") && pw != nil {
+		log.Infof("password for %s successfully changed to %s\n", clean.Log(m.Username()), pw.Hash)
+	} else {
+		log.Infof("password for %s successfully changed\n", clean.Log(m.Username()))
+	}
 
 	return nil
 }

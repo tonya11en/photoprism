@@ -18,11 +18,16 @@ import (
 // validation and return defaults if a value is empty.
 type Options struct {
 	Name                  string        `json:"-"`
+	About                 string        `json:"-"`
 	Edition               string        `json:"-"`
 	Version               string        `json:"-"`
 	Copyright             string        `json:"-"`
 	PartnerID             string        `yaml:"-" json:"-" flag:"partner-id"`
 	AuthMode              string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
+	LoginUri              string        `yaml:"LoginUri" json:"-" flag:"login-uri"`
+	RegisterUri           string        `yaml:"RegisterUri" json:"-" flag:"register-uri"`
+	PasswordLength        int           `yaml:"PasswordLength" json:"-" flag:"password-length"`
+	PasswordResetUri      string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri"`
 	Public                bool          `yaml:"Public" json:"-" flag:"public"`
 	AdminUser             string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
@@ -34,18 +39,16 @@ type Options struct {
 	Trace                 bool          `yaml:"Trace" json:"Trace" flag:"trace"`
 	Test                  bool          `yaml:"-" json:"Test,omitempty" flag:"test"`
 	Unsafe                bool          `yaml:"-" json:"-" flag:"unsafe"`
-	Demo                  bool          `yaml:"Demo" json:"-" flag:"demo"`
+	Demo                  bool          `yaml:"-" json:"-" flag:"demo"`
 	Sponsor               bool          `yaml:"-" json:"-" flag:"sponsor"`
-	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
-	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	ConfigPath            string        `yaml:"ConfigPath" json:"-" flag:"config-path"`
 	DefaultsYaml          string        `json:"-" yaml:"-" flag:"defaults-yaml"`
 	OriginalsPath         string        `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
 	OriginalsLimit        int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ResolutionLimit       int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
+	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
@@ -57,19 +60,25 @@ type Options struct {
 	WakeupInterval        time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
 	AutoIndex             int           `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
 	AutoImport            int           `yaml:"AutoImport" json:"AutoImport" flag:"auto-import"`
-	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
-	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
+	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
+	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	DisableSettings       bool          `yaml:"DisableSettings" json:"-" flag:"disable-settings"`
+	DisableRestart        bool          `yaml:"DisableRestart" json:"-" flag:"disable-restart"`
+	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
+	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
 	DisablePlaces         bool          `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
 	DisableTensorFlow     bool          `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
 	DisableFaces          bool          `yaml:"DisableFaces" json:"DisableFaces" flag:"disable-faces"`
 	DisableClassification bool          `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
 	DisableFFmpeg         bool          `yaml:"DisableFFmpeg" json:"DisableFFmpeg" flag:"disable-ffmpeg"`
 	DisableExifTool       bool          `yaml:"DisableExifTool" json:"DisableExifTool" flag:"disable-exiftool"`
-	DisableHeifConvert    bool          `yaml:"DisableHeifConvert" json:"DisableHeifConvert" flag:"disable-heifconvert"`
-	DisableDarktable      bool          `yaml:"DisableDarktable" json:"DisableDarktable" flag:"disable-darktable"`
-	DisableRawtherapee    bool          `yaml:"DisableRawtherapee" json:"DisableRawtherapee" flag:"disable-rawtherapee"`
 	DisableSips           bool          `yaml:"DisableSips" json:"DisableSips" flag:"disable-sips"`
+	DisableDarktable      bool          `yaml:"DisableDarktable" json:"DisableDarktable" flag:"disable-darktable"`
+	DisableRawTherapee    bool          `yaml:"DisableRawTherapee" json:"DisableRawTherapee" flag:"disable-rawtherapee"`
+	DisableImageMagick    bool          `yaml:"DisableImageMagick" json:"DisableImageMagick" flag:"disable-imagemagick"`
+	DisableHeifConvert    bool          `yaml:"DisableHeifConvert" json:"DisableHeifConvert" flag:"disable-heifconvert"`
+	DisableVectors        bool          `yaml:"DisableVectors" json:"DisableVectors" flag:"disable-vectors"`
+	DisableJpegXL         bool          `yaml:"DisableJpegXL" json:"DisableJpegXL" flag:"disable-jpegxl"`
 	DisableRaw            bool          `yaml:"DisableRaw" json:"DisableRaw" flag:"disable-raw"`
 	RawPresets            bool          `yaml:"RawPresets" json:"RawPresets" flag:"raw-presets"`
 	ExifBruteForce        bool          `yaml:"ExifBruteForce" json:"ExifBruteForce" flag:"exif-bruteforce"`
@@ -77,30 +86,36 @@ type Options struct {
 	UploadNSFW            bool          `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
 	DefaultTheme          string        `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`
 	DefaultLocale         string        `yaml:"DefaultLocale" json:"DefaultLocale" flag:"default-locale"`
-	AppIcon               string        `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
 	AppName               string        `yaml:"AppName" json:"AppName" flag:"app-name"`
 	AppMode               string        `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
+	AppIcon               string        `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`
+	AppColor              string        `yaml:"AppColor" json:"AppColor" flag:"app-color"`
 	LegalInfo             string        `yaml:"LegalInfo" json:"LegalInfo" flag:"legal-info"`
 	LegalUrl              string        `yaml:"LegalUrl" json:"LegalUrl" flag:"legal-url"`
 	WallpaperUri          string        `yaml:"WallpaperUri" json:"WallpaperUri" flag:"wallpaper-uri"`
 	CdnUrl                string        `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
+	CdnVideo              bool          `yaml:"CdnVideo" json:"CdnVideo" flag:"cdn-video"`
 	SiteUrl               string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	SiteAuthor            string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
 	SiteTitle             string        `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
 	SiteCaption           string        `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription       string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
 	SitePreview           string        `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
+	HttpsProxy            string        `yaml:"HttpsProxy" json:"HttpsProxy" flag:"https-proxy"`
+	HttpsProxyInsecure    bool          `yaml:"HttpsProxyInsecure" json:"HttpsProxyInsecure" flag:"https-proxy-insecure"`
 	TrustedProxies        []string      `yaml:"TrustedProxies" json:"-" flag:"trusted-proxy"`
 	ProxyProtoHeaders     []string      `yaml:"ProxyProtoHeaders" json:"-" flag:"proxy-proto-header"`
 	ProxyProtoHttps       []string      `yaml:"ProxyProtoHttps" json:"-" flag:"proxy-proto-https"`
-	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
-	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
-	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
-	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
 	DisableTLS            bool          `yaml:"DisableTLS" json:"DisableTLS" flag:"disable-tls"`
-	TLSEmail              string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"` // TLSEmail enabled automatic HTTPS via Let's Encrypt if set a valid email address.
+	TLSEmail              string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"`
 	TLSCert               string        `yaml:"TLSCert" json:"TLSCert" flag:"tls-cert"`
 	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
+	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
+	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
+	HttpCacheMaxAge       int           `yaml:"HttpCacheMaxAge" json:"HttpCacheMaxAge" flag:"http-cache-maxage"`
+	HttpCachePublic       bool          `yaml:"HttpCachePublic" json:"HttpCachePublic" flag:"http-cache-public"`
+	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
+	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
 	DatabaseDsn           string        `yaml:"DatabaseDsn" json:"-" flag:"database-dsn"`
 	DatabaseName          string        `yaml:"DatabaseName" json:"-" flag:"database-name"`
@@ -109,20 +124,24 @@ type Options struct {
 	DatabasePassword      string        `yaml:"DatabasePassword" json:"-" flag:"database-password"`
 	DatabaseConns         int           `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
 	DatabaseConnsIdle     int           `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
+	SipsBin               string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
+	SipsBlacklist         string        `yaml:"SipsBlacklist" json:"-" flag:"sips-blacklist"`
+	FFmpegBin             string        `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
+	FFmpegEncoder         string        `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
+	FFmpegBitrate         int           `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
+	FFmpegMapVideo        string        `yaml:"FFmpegMapVideo" json:"FFmpegMapVideo" flag:"ffmpeg-map-video"`
+	FFmpegMapAudio        string        `yaml:"FFmpegMapAudio" json:"FFmpegMapAudio" flag:"ffmpeg-map-audio"`
+	ExifToolBin           string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
 	DarktableBin          string        `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
 	DarktableCachePath    string        `yaml:"DarktableCachePath" json:"-" flag:"darktable-cache-path"`
 	DarktableConfigPath   string        `yaml:"DarktableConfigPath" json:"-" flag:"darktable-config-path"`
 	DarktableBlacklist    string        `yaml:"DarktableBlacklist" json:"-" flag:"darktable-blacklist"`
-	RawtherapeeBin        string        `yaml:"RawtherapeeBin" json:"-" flag:"rawtherapee-bin"`
-	RawtherapeeBlacklist  string        `yaml:"RawtherapeeBlacklist" json:"-" flag:"rawtherapee-blacklist"`
-	SipsBin               string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
-	SipsBlacklist         string        `yaml:"SipsBlacklist" json:"-" flag:"sips-blacklist"`
+	RawTherapeeBin        string        `yaml:"RawTherapeeBin" json:"-" flag:"rawtherapee-bin"`
+	RawTherapeeBlacklist  string        `yaml:"RawTherapeeBlacklist" json:"-" flag:"rawtherapee-blacklist"`
+	ImageMagickBin        string        `yaml:"ImageMagickBin" json:"-" flag:"imagemagick-bin"`
+	ImageMagickBlacklist  string        `yaml:"ImageMagickBlacklist" json:"-" flag:"imagemagick-blacklist"`
 	HeifConvertBin        string        `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
-	FFmpegBin             string        `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
-	FFmpegEncoder         string        `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
-	FFmpegBitrate         int           `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
-	ExifToolBin           string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
-	DetachServer          bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
+	RsvgConvertBin        string        `yaml:"RsvgConvertBin" json:"-" flag:"rsvgconvert-bin"`
 	DownloadToken         string        `yaml:"DownloadToken" json:"-" flag:"download-token"`
 	PreviewToken          string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	ThumbColor            string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
@@ -132,6 +151,7 @@ type Options struct {
 	ThumbUncached         bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
 	JpegQuality           string        `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
 	JpegSize              int           `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
+	PngSize               int           `yaml:"PngSize" json:"PngSize" flag:"png-size"`
 	FaceSize              int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore             float64       `yaml:"-" json:"-" flag:"face-score"`
 	FaceOverlap           int           `yaml:"-" json:"-" flag:"face-overlap"`
@@ -142,6 +162,7 @@ type Options struct {
 	FaceMatchDist         float64       `yaml:"-" json:"-" flag:"face-match-dist"`
 	PIDFilename           string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
 	LogFilename           string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
+	DetachServer          bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
 }
 
 // NewOptions creates a new configuration entity by using two methods:
@@ -163,8 +184,13 @@ func NewOptions(ctx *cli.Context) *Options {
 		c.Name = fmt.Sprintf("%s", s)
 	}
 
-	// Set app edition from metadata if possible.
+	// Set app about from metadata if possible.
 	if s, ok := ctx.App.Metadata["About"]; ok {
+		c.About = fmt.Sprintf("%s", s)
+	}
+
+	// Set app edition from metadata if possible.
+	if s, ok := ctx.App.Metadata["Edition"]; ok {
 		c.Edition = fmt.Sprintf("%s", s)
 	}
 

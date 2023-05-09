@@ -23,64 +23,75 @@ const (
 
 // ClientConfig represents HTTP client / Web UI config options.
 type ClientConfig struct {
-	Mode            string              `json:"mode"`
-	Name            string              `json:"name"`
-	About           string              `json:"about"`
-	Edition         string              `json:"edition"`
-	Version         string              `json:"version"`
-	Copyright       string              `json:"copyright"`
-	Flags           string              `json:"flags"`
-	BaseUri         string              `json:"baseUri"`
-	StaticUri       string              `json:"staticUri"`
-	CssUri          string              `json:"cssUri"`
-	JsUri           string              `json:"jsUri"`
-	ManifestUri     string              `json:"manifestUri"`
-	ApiUri          string              `json:"apiUri"`
-	ContentUri      string              `json:"contentUri"`
-	WallpaperUri    string              `json:"wallpaperUri"`
-	SiteUrl         string              `json:"siteUrl"`
-	SiteDomain      string              `json:"siteDomain"`
-	SiteAuthor      string              `json:"siteAuthor"`
-	SiteTitle       string              `json:"siteTitle"`
-	SiteCaption     string              `json:"siteCaption"`
-	SiteDescription string              `json:"siteDescription"`
-	SitePreview     string              `json:"sitePreview"`
-	LegalInfo       string              `json:"legalInfo"`
-	LegalUrl        string              `json:"legalUrl"`
-	AppName         string              `json:"appName"`
-	AppMode         string              `json:"appMode"`
-	AppIcon         string              `json:"appIcon"`
-	Debug           bool                `json:"debug"`
-	Trace           bool                `json:"trace"`
-	Test            bool                `json:"test"`
-	Demo            bool                `json:"demo"`
-	Sponsor         bool                `json:"sponsor"`
-	ReadOnly        bool                `json:"readonly"`
-	UploadNSFW      bool                `json:"uploadNSFW"`
-	Public          bool                `json:"public"`
-	AuthMode        string              `json:"authMode"`
-	Experimental    bool                `json:"experimental"`
-	AlbumCategories []string            `json:"albumCategories"`
-	Albums          entity.Albums       `json:"albums"`
-	Cameras         entity.Cameras      `json:"cameras"`
-	Lenses          entity.Lenses       `json:"lenses"`
-	Countries       entity.Countries    `json:"countries"`
-	People          entity.People       `json:"people"`
-	Thumbs          ThumbSizes          `json:"thumbs"`
-	MapKey          string              `json:"mapKey"`
-	DownloadToken   string              `json:"downloadToken,omitempty"`
-	PreviewToken    string              `json:"previewToken,omitempty"`
-	Disable         ClientDisable       `json:"disable"`
-	Count           ClientCounts        `json:"count"`
-	Pos             ClientPosition      `json:"pos"`
-	Years           Years               `json:"years"`
-	Colors          []map[string]string `json:"colors"`
-	Categories      CategoryLabels      `json:"categories"`
-	Clip            int                 `json:"clip"`
-	Server          env.Resources       `json:"server"`
-	Settings        *customize.Settings `json:"settings,omitempty"`
-	ACL             acl.Grants          `json:"acl,omitempty"`
-	Ext             Values              `json:"ext"`
+	Mode             string              `json:"mode"`
+	Name             string              `json:"name"`
+	About            string              `json:"about"`
+	Edition          string              `json:"edition"`
+	Version          string              `json:"version"`
+	Copyright        string              `json:"copyright"`
+	Flags            string              `json:"flags"`
+	BaseUri          string              `json:"baseUri"`
+	StaticUri        string              `json:"staticUri"`
+	CssUri           string              `json:"cssUri"`
+	JsUri            string              `json:"jsUri"`
+	ManifestUri      string              `json:"manifestUri"`
+	ApiUri           string              `json:"apiUri"`
+	ContentUri       string              `json:"contentUri"`
+	VideoUri         string              `json:"videoUri"`
+	WallpaperUri     string              `json:"wallpaperUri"`
+	SiteUrl          string              `json:"siteUrl"`
+	SiteDomain       string              `json:"siteDomain"`
+	SiteAuthor       string              `json:"siteAuthor"`
+	SiteTitle        string              `json:"siteTitle"`
+	SiteCaption      string              `json:"siteCaption"`
+	SiteDescription  string              `json:"siteDescription"`
+	SitePreview      string              `json:"sitePreview"`
+	LegalInfo        string              `json:"legalInfo"`
+	LegalUrl         string              `json:"legalUrl"`
+	AppName          string              `json:"appName"`
+	AppMode          string              `json:"appMode"`
+	AppIcon          string              `json:"appIcon"`
+	AppColor         string              `json:"appColor"`
+	Restart          bool                `json:"restart"`
+	Debug            bool                `json:"debug"`
+	Trace            bool                `json:"trace"`
+	Test             bool                `json:"test"`
+	Demo             bool                `json:"demo"`
+	Sponsor          bool                `json:"sponsor"`
+	ReadOnly         bool                `json:"readonly"`
+	UploadNSFW       bool                `json:"uploadNSFW"`
+	Public           bool                `json:"public"`
+	AuthMode         string              `json:"authMode"`
+	UsersPath        string              `json:"usersPath"`
+	LoginUri         string              `json:"loginUri"`
+	RegisterUri      string              `json:"registerUri"`
+	PasswordLength   int                 `json:"passwordLength"`
+	PasswordResetUri string              `json:"passwordResetUri"`
+	Experimental     bool                `json:"experimental"`
+	AlbumCategories  []string            `json:"albumCategories"`
+	Albums           entity.Albums       `json:"albums"`
+	Cameras          entity.Cameras      `json:"cameras"`
+	Lenses           entity.Lenses       `json:"lenses"`
+	Countries        entity.Countries    `json:"countries"`
+	People           entity.People       `json:"people"`
+	Thumbs           ThumbSizes          `json:"thumbs"`
+	Tier             int                 `json:"tier"`
+	Membership       string              `json:"membership"`
+	Customer         string              `json:"customer"`
+	MapKey           string              `json:"mapKey"`
+	DownloadToken    string              `json:"downloadToken,omitempty"`
+	PreviewToken     string              `json:"previewToken,omitempty"`
+	Disable          ClientDisable       `json:"disable"`
+	Count            ClientCounts        `json:"count"`
+	Pos              ClientPosition      `json:"pos"`
+	Years            Years               `json:"years"`
+	Colors           []map[string]string `json:"colors"`
+	Categories       CategoryLabels      `json:"categories"`
+	Clip             int                 `json:"clip"`
+	Server           env.Resources       `json:"server"`
+	Settings         *customize.Settings `json:"settings,omitempty"`
+	ACL              acl.Grants          `json:"acl,omitempty"`
+	Ext              Values              `json:"ext"`
 }
 
 // ApplyACL updates the client config values based on the ACL and Role provided.
@@ -99,20 +110,23 @@ type Years []int
 
 // ClientDisable represents disabled client features a user cannot turn back on.
 type ClientDisable struct {
-	Backups        bool `json:"backups"`
 	WebDAV         bool `json:"webdav"`
 	Settings       bool `json:"settings"`
 	Places         bool `json:"places"`
-	ExifTool       bool `json:"exiftool"`
-	FFmpeg         bool `json:"ffmpeg"`
-	Raw            bool `json:"raw"`
-	Darktable      bool `json:"darktable"`
-	Rawtherapee    bool `json:"rawtherapee"`
-	Sips           bool `json:"sips"`
-	HeifConvert    bool `json:"heifconvert"`
+	Backups        bool `json:"backups"`
 	TensorFlow     bool `json:"tensorflow"`
 	Faces          bool `json:"faces"`
 	Classification bool `json:"classification"`
+	Sips           bool `json:"sips"`
+	FFmpeg         bool `json:"ffmpeg"`
+	ExifTool       bool `json:"exiftool"`
+	Darktable      bool `json:"darktable"`
+	RawTherapee    bool `json:"rawtherapee"`
+	ImageMagick    bool `json:"imagemagick"`
+	HeifConvert    bool `json:"heifconvert"`
+	Vectors        bool `json:"vectors"`
+	JpegXL         bool `json:"jpegxl"`
+	Raw            bool `json:"raw"`
 }
 
 // ClientCounts represents photo, video and album counts for the client UI.
@@ -126,17 +140,22 @@ type ClientCounts struct {
 	Countries      int `json:"countries"`
 	Hidden         int `json:"hidden"`
 	Favorites      int `json:"favorites"`
-	Private        int `json:"private"`
 	Review         int `json:"review"`
 	Stories        int `json:"stories"`
+	Private        int `json:"private"`
 	Albums         int `json:"albums"`
+	PrivateAlbums  int `json:"private_albums"`
 	Moments        int `json:"moments"`
+	PrivateMoments int `json:"private_moments"`
 	Months         int `json:"months"`
+	PrivateMonths  int `json:"private_months"`
+	States         int `json:"states"`
+	PrivateStates  int `json:"private_states"`
 	Folders        int `json:"folders"`
+	PrivateFolders int `json:"private_folders"`
 	Files          int `json:"files"`
 	People         int `json:"people"`
 	Places         int `json:"places"`
-	States         int `json:"states"`
 	Labels         int `json:"labels"`
 	LabelMaxPhotos int `json:"labelMaxPhotos"`
 }
@@ -210,69 +229,82 @@ func (c *Config) ClientPublic() ClientConfig {
 		Settings: c.PublicSettings(),
 		ACL:      acl.Resources.Grants(acl.RoleUnknown),
 		Disable: ClientDisable{
-			Backups:        true,
 			WebDAV:         true,
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
-			ExifTool:       true,
-			FFmpeg:         true,
-			Raw:            true,
-			Darktable:      true,
-			Rawtherapee:    true,
-			Sips:           true,
-			HeifConvert:    true,
+			Backups:        true,
 			TensorFlow:     true,
 			Faces:          true,
 			Classification: true,
+			Sips:           true,
+			FFmpeg:         true,
+			ExifTool:       true,
+			Darktable:      true,
+			RawTherapee:    true,
+			ImageMagick:    true,
+			HeifConvert:    true,
+			Vectors:        c.DisableVectors(),
+			JpegXL:         true,
+			Raw:            true,
 		},
-		Flags:           strings.Join(c.Flags(), " "),
-		Mode:            string(ClientPublic),
-		Name:            c.Name(),
-		About:           c.Edition(),
-		Edition:         c.Hub().Status,
-		BaseUri:         c.BaseUri(""),
-		StaticUri:       c.StaticUri(),
-		CssUri:          a.AppCssUri(),
-		JsUri:           a.AppJsUri(),
-		ApiUri:          c.ApiUri(),
-		ContentUri:      c.ContentUri(),
-		SiteUrl:         c.SiteUrl(),
-		SiteDomain:      c.SiteDomain(),
-		SiteAuthor:      c.SiteAuthor(),
-		SiteTitle:       c.SiteTitle(),
-		SiteCaption:     c.SiteCaption(),
-		SiteDescription: c.SiteDescription(),
-		SitePreview:     c.SitePreview(),
-		LegalInfo:       c.LegalInfo(),
-		LegalUrl:        c.LegalUrl(),
-		AppName:         c.AppName(),
-		AppMode:         c.AppMode(),
-		AppIcon:         c.AppIcon(),
-		WallpaperUri:    c.WallpaperUri(),
-		Version:         c.Version(),
-		Copyright:       c.Copyright(),
-		Debug:           c.Debug(),
-		Trace:           c.Trace(),
-		Test:            c.Test(),
-		Demo:            c.Demo(),
-		Sponsor:         c.Sponsor(),
-		ReadOnly:        c.ReadOnly(),
-		Public:          c.Public(),
-		AuthMode:        c.AuthMode(),
-		Experimental:    c.Experimental(),
-		Albums:          entity.Albums{},
-		Cameras:         entity.Cameras{},
-		Lenses:          entity.Lenses{},
-		Countries:       entity.Countries{},
-		People:          entity.People{},
-		MapKey:          "",
-		Thumbs:          Thumbs,
-		Colors:          colors.All.List(),
-		ManifestUri:     c.ClientManifestUri(),
-		Clip:            txt.ClipDefault,
-		PreviewToken:    entity.TokenPublic,
-		DownloadToken:   entity.TokenPublic,
-		Ext:             ClientExt(c, ClientPublic),
+		Flags:            strings.Join(c.Flags(), " "),
+		Mode:             string(ClientPublic),
+		Name:             c.Name(),
+		About:            c.About(),
+		Edition:          c.Edition(),
+		BaseUri:          c.BaseUri(""),
+		StaticUri:        c.StaticUri(),
+		CssUri:           a.AppCssUri(),
+		JsUri:            a.AppJsUri(),
+		ApiUri:           c.ApiUri(),
+		ContentUri:       c.ContentUri(),
+		VideoUri:         c.VideoUri(),
+		SiteUrl:          c.SiteUrl(),
+		SiteDomain:       c.SiteDomain(),
+		SiteAuthor:       c.SiteAuthor(),
+		SiteTitle:        c.SiteTitle(),
+		SiteCaption:      c.SiteCaption(),
+		SiteDescription:  c.SiteDescription(),
+		SitePreview:      c.SitePreview(),
+		LegalInfo:        c.LegalInfo(),
+		LegalUrl:         c.LegalUrl(),
+		AppName:          c.AppName(),
+		AppMode:          c.AppMode(),
+		AppIcon:          c.AppIcon(),
+		AppColor:         c.AppColor(),
+		WallpaperUri:     c.WallpaperUri(),
+		Version:          c.Version(),
+		Copyright:        c.Copyright(),
+		Restart:          c.Restart(),
+		Debug:            c.Debug(),
+		Trace:            c.Trace(),
+		Test:             c.Test(),
+		Demo:             c.Demo(),
+		Sponsor:          c.Sponsor(),
+		ReadOnly:         c.ReadOnly(),
+		Public:           c.Public(),
+		AuthMode:         c.AuthMode(),
+		UsersPath:        c.UsersPath(),
+		LoginUri:         c.LoginUri(),
+		RegisterUri:      c.RegisterUri(),
+		PasswordResetUri: c.PasswordResetUri(),
+		Experimental:     c.Experimental(),
+		Albums:           entity.Albums{},
+		Cameras:          entity.Cameras{},
+		Lenses:           entity.Lenses{},
+		Countries:        entity.Countries{},
+		People:           entity.People{},
+		Tier:             c.Hub().Tier(),
+		Membership:       c.Hub().Membership(),
+		Customer:         "",
+		MapKey:           "",
+		Thumbs:           Thumbs,
+		Colors:           colors.All.List(),
+		ManifestUri:      c.ClientManifestUri(),
+		Clip:             txt.ClipDefault,
+		PreviewToken:     entity.TokenPublic,
+		DownloadToken:    entity.TokenPublic,
+		Ext:              ClientExt(c, ClientPublic),
 	}
 
 	return cfg
@@ -286,70 +318,83 @@ func (c *Config) ClientShare() ClientConfig {
 		Settings: c.ShareSettings(),
 		ACL:      acl.Resources.Grants(acl.RoleVisitor),
 		Disable: ClientDisable{
-			Backups:        true,
 			WebDAV:         c.DisableWebDAV(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
-			ExifTool:       true,
-			FFmpeg:         true,
-			Raw:            true,
-			Darktable:      true,
-			Rawtherapee:    true,
-			Sips:           true,
-			HeifConvert:    true,
+			Backups:        true,
 			TensorFlow:     true,
-			Faces:          true,
-			Classification: true,
+			Faces:          c.DisableFaces(),
+			Classification: c.DisableClassification(),
+			Sips:           true,
+			FFmpeg:         true,
+			ExifTool:       true,
+			Darktable:      true,
+			RawTherapee:    true,
+			ImageMagick:    true,
+			HeifConvert:    true,
+			Vectors:        c.DisableVectors(),
+			JpegXL:         c.DisableJpegXL(),
+			Raw:            c.DisableRaw(),
 		},
-		Flags:           strings.Join(c.Flags(), " "),
-		Mode:            string(ClientShare),
-		Name:            c.Name(),
-		About:           c.Edition(),
-		Edition:         c.Hub().Status,
-		BaseUri:         c.BaseUri(""),
-		StaticUri:       c.StaticUri(),
-		CssUri:          a.AppCssUri(),
-		JsUri:           a.ShareJsUri(),
-		ApiUri:          c.ApiUri(),
-		ContentUri:      c.ContentUri(),
-		SiteUrl:         c.SiteUrl(),
-		SiteDomain:      c.SiteDomain(),
-		SiteAuthor:      c.SiteAuthor(),
-		SiteTitle:       c.SiteTitle(),
-		SiteCaption:     c.SiteCaption(),
-		SiteDescription: c.SiteDescription(),
-		SitePreview:     c.SitePreview(),
-		LegalInfo:       c.LegalInfo(),
-		LegalUrl:        c.LegalUrl(),
-		AppName:         c.AppName(),
-		AppMode:         c.AppMode(),
-		AppIcon:         c.AppIcon(),
-		WallpaperUri:    c.WallpaperUri(),
-		Version:         c.Version(),
-		Copyright:       c.Copyright(),
-		Debug:           c.Debug(),
-		Trace:           c.Trace(),
-		Test:            c.Test(),
-		Demo:            c.Demo(),
-		Sponsor:         c.Sponsor(),
-		ReadOnly:        c.ReadOnly(),
-		UploadNSFW:      c.UploadNSFW(),
-		Public:          c.Public(),
-		AuthMode:        c.AuthMode(),
-		Experimental:    c.Experimental(),
-		Albums:          entity.Albums{},
-		Cameras:         entity.Cameras{},
-		Lenses:          entity.Lenses{},
-		Countries:       entity.Countries{},
-		People:          entity.People{},
-		Colors:          colors.All.List(),
-		Thumbs:          Thumbs,
-		MapKey:          c.Hub().MapKey(),
-		DownloadToken:   c.DownloadToken(),
-		PreviewToken:    c.PreviewToken(),
-		ManifestUri:     c.ClientManifestUri(),
-		Clip:            txt.ClipDefault,
-		Ext:             ClientExt(c, ClientShare),
+		Flags:            strings.Join(c.Flags(), " "),
+		Mode:             string(ClientShare),
+		Name:             c.Name(),
+		About:            c.About(),
+		Edition:          c.Edition(),
+		BaseUri:          c.BaseUri(""),
+		StaticUri:        c.StaticUri(),
+		CssUri:           a.AppCssUri(),
+		JsUri:            a.ShareJsUri(),
+		ApiUri:           c.ApiUri(),
+		ContentUri:       c.ContentUri(),
+		VideoUri:         c.VideoUri(),
+		SiteUrl:          c.SiteUrl(),
+		SiteDomain:       c.SiteDomain(),
+		SiteAuthor:       c.SiteAuthor(),
+		SiteTitle:        c.SiteTitle(),
+		SiteCaption:      c.SiteCaption(),
+		SiteDescription:  c.SiteDescription(),
+		SitePreview:      c.SitePreview(),
+		LegalInfo:        c.LegalInfo(),
+		LegalUrl:         c.LegalUrl(),
+		AppName:          c.AppName(),
+		AppMode:          c.AppMode(),
+		AppIcon:          c.AppIcon(),
+		AppColor:         c.AppColor(),
+		WallpaperUri:     c.WallpaperUri(),
+		Version:          c.Version(),
+		Copyright:        c.Copyright(),
+		Restart:          c.Restart(),
+		Debug:            c.Debug(),
+		Trace:            c.Trace(),
+		Test:             c.Test(),
+		Demo:             c.Demo(),
+		Sponsor:          c.Sponsor(),
+		ReadOnly:         c.ReadOnly(),
+		UploadNSFW:       c.UploadNSFW(),
+		Public:           c.Public(),
+		AuthMode:         c.AuthMode(),
+		UsersPath:        "",
+		LoginUri:         c.LoginUri(),
+		RegisterUri:      c.RegisterUri(),
+		PasswordResetUri: c.PasswordResetUri(),
+		Experimental:     c.Experimental(),
+		Albums:           entity.Albums{},
+		Cameras:          entity.Cameras{},
+		Lenses:           entity.Lenses{},
+		Countries:        entity.Countries{},
+		People:           entity.People{},
+		Colors:           colors.All.List(),
+		Thumbs:           Thumbs,
+		Tier:             c.Hub().Tier(),
+		Membership:       c.Hub().Membership(),
+		Customer:         c.Hub().Customer(),
+		MapKey:           c.Hub().MapKey(),
+		DownloadToken:    c.DownloadToken(),
+		PreviewToken:     c.PreviewToken(),
+		ManifestUri:      c.ClientManifestUri(),
+		Clip:             txt.ClipDefault,
+		Ext:              ClientExt(c, ClientShare),
 	}
 
 	return cfg
@@ -368,71 +413,85 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	cfg := ClientConfig{
 		Settings: s,
 		Disable: ClientDisable{
-			Backups:        c.DisableBackups(),
 			WebDAV:         c.DisableWebDAV(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
-			ExifTool:       c.DisableExifTool(),
-			FFmpeg:         c.DisableFFmpeg(),
-			Raw:            c.DisableRaw(),
-			Darktable:      c.DisableDarktable(),
-			Rawtherapee:    c.DisableRawtherapee(),
-			Sips:           c.DisableSips(),
-			HeifConvert:    c.DisableHeifConvert(),
+			Backups:        c.DisableBackups(),
 			TensorFlow:     c.DisableTensorFlow(),
 			Faces:          c.DisableFaces(),
 			Classification: c.DisableClassification(),
+			Sips:           c.DisableSips(),
+			FFmpeg:         c.DisableFFmpeg(),
+			ExifTool:       c.DisableExifTool(),
+			Darktable:      c.DisableDarktable(),
+			RawTherapee:    c.DisableRawTherapee(),
+			ImageMagick:    c.DisableImageMagick(),
+			HeifConvert:    c.DisableHeifConvert(),
+			Vectors:        c.DisableVectors(),
+			JpegXL:         c.DisableJpegXL(),
+			Raw:            c.DisableRaw(),
 		},
-		Flags:           strings.Join(c.Flags(), " "),
-		Mode:            string(ClientUser),
-		Name:            c.Name(),
-		About:           c.Edition(),
-		Edition:         c.Hub().Status,
-		BaseUri:         c.BaseUri(""),
-		StaticUri:       c.StaticUri(),
-		CssUri:          a.AppCssUri(),
-		JsUri:           a.AppJsUri(),
-		ApiUri:          c.ApiUri(),
-		ContentUri:      c.ContentUri(),
-		SiteUrl:         c.SiteUrl(),
-		SiteDomain:      c.SiteDomain(),
-		SiteAuthor:      c.SiteAuthor(),
-		SiteTitle:       c.SiteTitle(),
-		SiteCaption:     c.SiteCaption(),
-		SiteDescription: c.SiteDescription(),
-		SitePreview:     c.SitePreview(),
-		LegalInfo:       c.LegalInfo(),
-		LegalUrl:        c.LegalUrl(),
-		AppName:         c.AppName(),
-		AppMode:         c.AppMode(),
-		AppIcon:         c.AppIcon(),
-		WallpaperUri:    c.WallpaperUri(),
-		Version:         c.Version(),
-		Copyright:       c.Copyright(),
-		Debug:           c.Debug(),
-		Trace:           c.Trace(),
-		Test:            c.Test(),
-		Demo:            c.Demo(),
-		Sponsor:         c.Sponsor(),
-		ReadOnly:        c.ReadOnly(),
-		UploadNSFW:      c.UploadNSFW(),
-		Public:          c.Public(),
-		AuthMode:        c.AuthMode(),
-		Experimental:    c.Experimental(),
-		Albums:          entity.Albums{},
-		Cameras:         entity.Cameras{},
-		Lenses:          entity.Lenses{},
-		Countries:       entity.Countries{},
-		People:          entity.People{},
-		Colors:          colors.All.List(),
-		Thumbs:          Thumbs,
-		MapKey:          c.Hub().MapKey(),
-		DownloadToken:   c.DownloadToken(),
-		PreviewToken:    c.PreviewToken(),
-		ManifestUri:     c.ClientManifestUri(),
-		Clip:            txt.ClipDefault,
-		Server:          env.Info(),
-		Ext:             ClientExt(c, ClientUser),
+		Flags:            strings.Join(c.Flags(), " "),
+		Mode:             string(ClientUser),
+		Name:             c.Name(),
+		About:            c.About(),
+		Edition:          c.Edition(),
+		BaseUri:          c.BaseUri(""),
+		StaticUri:        c.StaticUri(),
+		CssUri:           a.AppCssUri(),
+		JsUri:            a.AppJsUri(),
+		ApiUri:           c.ApiUri(),
+		ContentUri:       c.ContentUri(),
+		VideoUri:         c.VideoUri(),
+		SiteUrl:          c.SiteUrl(),
+		SiteDomain:       c.SiteDomain(),
+		SiteAuthor:       c.SiteAuthor(),
+		SiteTitle:        c.SiteTitle(),
+		SiteCaption:      c.SiteCaption(),
+		SiteDescription:  c.SiteDescription(),
+		SitePreview:      c.SitePreview(),
+		LegalInfo:        c.LegalInfo(),
+		LegalUrl:         c.LegalUrl(),
+		AppName:          c.AppName(),
+		AppMode:          c.AppMode(),
+		AppIcon:          c.AppIcon(),
+		AppColor:         c.AppColor(),
+		WallpaperUri:     c.WallpaperUri(),
+		Version:          c.Version(),
+		Copyright:        c.Copyright(),
+		Restart:          c.Restart(),
+		Debug:            c.Debug(),
+		Trace:            c.Trace(),
+		Test:             c.Test(),
+		Demo:             c.Demo(),
+		Sponsor:          c.Sponsor(),
+		ReadOnly:         c.ReadOnly(),
+		UploadNSFW:       c.UploadNSFW(),
+		Public:           c.Public(),
+		AuthMode:         c.AuthMode(),
+		UsersPath:        c.UsersPath(),
+		LoginUri:         c.LoginUri(),
+		RegisterUri:      c.RegisterUri(),
+		PasswordLength:   c.PasswordLength(),
+		PasswordResetUri: c.PasswordResetUri(),
+		Experimental:     c.Experimental(),
+		Albums:           entity.Albums{},
+		Cameras:          entity.Cameras{},
+		Lenses:           entity.Lenses{},
+		Countries:        entity.Countries{},
+		People:           entity.People{},
+		Colors:           colors.All.List(),
+		Thumbs:           Thumbs,
+		Tier:             c.Hub().Tier(),
+		Membership:       c.Hub().Membership(),
+		Customer:         c.Hub().Customer(),
+		MapKey:           c.Hub().MapKey(),
+		DownloadToken:    c.DownloadToken(),
+		PreviewToken:     c.PreviewToken(),
+		ManifestUri:      c.ClientManifestUri(),
+		Clip:             txt.ClipDefault,
+		Server:           env.Info(),
+		Ext:              ClientExt(c, ClientUser),
 	}
 
 	hidePrivate := c.Settings().Features.Private
@@ -462,8 +521,8 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Table("photos").
 			Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
 				"SUM(photo_type = 'live' AND photo_quality > -1 AND photo_private = 0) AS live, " +
-				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','animated') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
-				"SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, " +
+				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','animated','vector','raw') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
+				"SUM(photo_type IN ('image','live','animated','vector','raw') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, " +
 				"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
 				"SUM(photo_private = 1 AND photo_quality > -1) AS private").
 			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
@@ -483,7 +542,13 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Take(&cfg.Count)
 	}
 
+	// Calculate total count.
 	cfg.Count.All = cfg.Count.Photos + cfg.Count.Live + cfg.Count.Videos
+
+	// Exclude pictures in review from total count.
+	if c.Settings().Features.Review {
+		cfg.Count.All = cfg.Count.All - cfg.Count.Review
+	}
 
 	c.Db().
 		Table("labels").
@@ -496,13 +561,15 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	if hidePrivate {
 		c.Db().
 			Table("albums").
-			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders, "+
+				"SUM(album_type = ? AND album_private = 1) AS private_albums, SUM(album_type = ? AND album_private = 1) AS private_moments, SUM(album_type = ? AND album_private = 1) AS private_months, SUM(album_type = ? AND album_private = 1) AS private_states, SUM(album_type = ? AND album_private = 1) AS private_folders",
+				entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder, entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
 			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.photo_private = 0 AND photos.deleted_at IS NULL))").
 			Take(&cfg.Count)
 	} else {
 		c.Db().
 			Table("albums").
-			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
 			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL))").
 			Take(&cfg.Count)
 	}
@@ -510,7 +577,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	c.Db().
 		Table("files").
 		Select("COUNT(*) AS files").
-		Where("file_missing = 0 AND file_root = ?", entity.RootOriginals).
+		Where("file_missing = 0 AND file_root = ? AND deleted_at IS NULL", entity.RootOriginals).
 		Take(&cfg.Count)
 
 	c.Db().
@@ -559,7 +626,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Select("l.label_uid, l.custom_slug, l.label_name").
 		Joins("JOIN labels l ON categories.category_id = l.id").
 		Where("l.deleted_at IS NULL").
-		Group("l.custom_slug").
+		Group("l.custom_slug, l.label_uid, l.label_name").
 		Order("l.custom_slug").
 		Limit(1000).Offset(0).
 		Scan(&cfg.Categories)

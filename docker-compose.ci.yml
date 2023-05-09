@@ -19,8 +19,8 @@ services:
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
       PHOTOPRISM_INIT: "https"
-      PHOTOPRISM_ADMIN_USER: "admin"                       # admin username
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (minimum 8 characters)
+      PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "public"                       # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
@@ -53,7 +53,7 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"  # disables all features depending on TensorFlow
       PHOTOPRISM_DETECT_NSFW: "false"         # automatically flags photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "false"         # allow uploads that may be offensive
-      PHOTOPRISM_RAW_PRESETS: "false"         # enables applying user presets when converting RAW files (reduces performance)
+      PHOTOPRISM_RAW_PRESETS: "false"         # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_THUMB_FILTER: "lanczos"      # resample filter, best to worst: blackman, lanczos, cubic, linear
       PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 2048             # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
@@ -146,7 +146,7 @@ services:
   ## MariaDB Database Server
   ## Docs: https://mariadb.com/docs/reference/
   mariadb:
-    image: mariadb:10.9
+    image: mariadb:10.11
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined

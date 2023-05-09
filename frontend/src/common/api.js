@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -38,7 +38,7 @@ const testConfig = {
   downloadToken: "public",
   cssUri: "/static/build/app.2259c0edcc020e7af593.css",
   jsUri: "/static/build/app.9bd7132eaee8e4c7c7e3.js",
-  manifestUri: "/manifest.json?0e41a7e5",
+  manifestUri: "/manifest.json",
 };
 
 const c = window.__CONFIG__ ? window.__CONFIG__ : testConfig;
@@ -88,27 +88,34 @@ Api.interceptors.response.use(
   function (error) {
     Notify.ajaxEnd();
 
+    // Skip error handling if request was canceled.
     if (Axios.isCancel(error)) {
       return Promise.reject(error);
     }
 
-    if (console && console.log) {
+    // Log error for debugging.
+    if (console && console.log && error) {
       console.log(error);
     }
 
-    let errorMessage = $gettext("An error occurred - are you offline?");
+    // Default error message.
+    let errorMessage = $gettext("Request failed - are you offline?");
     let code = error.code;
 
+    // Extract error details from response.
     if (error.response && error.response.data) {
       let data = error.response.data;
       code = data.code;
       errorMessage = data.message ? data.message : data.error;
     }
 
-    if (code === 401) {
-      Notify.logout(errorMessage);
-    } else {
-      Notify.error(errorMessage);
+    // Show error notification.
+    if (errorMessage) {
+      if (code === 401) {
+        Notify.logout(errorMessage);
+      } else {
+        Notify.error(errorMessage);
+      }
     }
 
     return Promise.reject(error);

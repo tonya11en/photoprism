@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/react"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -25,6 +26,7 @@ const (
 	PhotoUID = byte('p')
 )
 
+var IndexUpdateInterval = 3 * time.Hour           // 3 Hours
 var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
 var MetadataEstimateInterval = 24 * 7 * time.Hour // 7 Days
 
@@ -53,7 +55,7 @@ type Photo struct {
 	ID               uint          `gorm:"primary_key" yaml:"-"`
 	UUID             string        `gorm:"type:VARBINARY(64);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time     `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
-	TakenAtLocal     time.Time     `gorm:"type:DATETIME;" yaml:"-"`
+	TakenAtLocal     time.Time     `gorm:"type:DATETIME;" json:"TakenAtLocal" yaml:"TakenAtLocal"`
 	TakenSrc         string        `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
 	PhotoUID         string        `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string        `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
@@ -239,6 +241,8 @@ func (m *Photo) String() string {
 func (m *Photo) FirstOrCreate() *Photo {
 	if err := m.Create(); err == nil {
 		return m
+	} else {
+		log.Tracef("photo: %s in %s (create)", err, m.String())
 	}
 
 	return FindPhoto(*m)
@@ -298,14 +302,14 @@ func FindPhoto(find Photo) *Photo {
 
 	// Search for UID.
 	if rnd.IsUID(find.PhotoUID, PhotoUID) {
-		if !stmt.First(&m, "photo_uid = ?", find.PhotoUID).RecordNotFound() {
+		if stmt.First(&m, "photo_uid = ?", find.PhotoUID).Error == nil {
 			return &m
 		}
 	}
 
 	// Search for ID.
 	if find.ID > 0 {
-		if !stmt.First(&m, "id = ?", find.ID).RecordNotFound() {
+		if stmt.First(&m, "id = ?", find.ID).Error == nil {
 			return &m
 		}
 	}
@@ -651,6 +655,10 @@ func (m *Photo) SetCamera(camera *Camera, source string) {
 	m.CameraID = camera.ID
 	m.Camera = camera
 	m.CameraSrc = source
+
+	if !m.PhotoScan && m.Camera.Scanner() {
+		m.PhotoScan = true
+	}
 }
 
 // SetLens updates the lens.
@@ -918,12 +926,12 @@ func (m *Photo) SetPrimary(fileUid string) (err error) {
 	if fileUid != "" {
 		// Do nothing.
 	} else if err = Db().Model(File{}).
-		Where("photo_uid = ? AND file_type = 'jpg' AND file_missing = 0 AND file_error = ''", m.PhotoUID).
+		Where("photo_uid = ? AND file_type IN (?) AND file_missing = 0 AND file_error = ''", m.PhotoUID, media.PreviewExpr).
 		Order("file_width DESC, file_hdr DESC").Limit(1).
 		Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
-		return fmt.Errorf("found no jpeg for photo uid %s", clean.Log(m.PhotoUID))
+		return fmt.Errorf("found no preview image for %s", clean.Log(m.PhotoUID))
 	} else {
 		fileUid = files[0]
 	}

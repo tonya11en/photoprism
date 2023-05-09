@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -142,6 +142,7 @@ export default class Session {
 
   deleteId() {
     this.session_id = null;
+    this.provider = "";
     this.storage.removeItem("session_id");
 
     delete Api.defaults.headers.common[SessionHeader];
@@ -156,6 +157,9 @@ export default class Session {
 
     if (resp.data.id) {
       this.setId(resp.data.id);
+    }
+    if (resp.data.provider) {
+      this.provider = resp.data.provider;
     }
     if (resp.data.config) {
       this.setConfig(resp.data.config);
@@ -239,6 +243,10 @@ export default class Session {
 
   isAdmin() {
     return this.user && this.user.hasId() && (this.user.Role === "admin" || this.user.SuperAdmin);
+  }
+
+  isSuperAdmin() {
+    return this.user && this.user.hasId() && this.user.SuperAdmin;
   }
 
   isAnonymous() {

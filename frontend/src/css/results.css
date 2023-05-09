@@ -1,5 +1,10 @@
 /* PhotoPrism Search Result Styles */
 
+/* Disable native long-touch menu on iOS Safari */
+#photoprism .search-results .result {
+    -webkit-touch-callout: none;
+}
+
 /*
 For more information on the contain property, see https://developers.google.com/web/updates/2016/06/css-containment
 */
@@ -7,7 +12,8 @@ body.chrome #photoprism .search-results .result {
     contain: layout style paint;
 }
 
-#photoprism .v-alert.no-results.v-alert--outline {
+#photoprism .v-alert.no-results.v-alert--outline,
+#photoprism .v-alert.no-outline.v-alert--outline {
     border: 0 !important;
 }
 
@@ -56,6 +62,14 @@ body.chrome #photoprism .search-results .result {
     position: absolute;
     left: 12px;
     top: 12px;
+}
+
+#photoprism .list-view .action-secondary {
+    opacity: 0.4;
+}
+
+#photoprism .list-view tr:hover .action-secondary {
+    opacity: 1;
 }
 
 #photoprism .p-clipboard.--ltr {
@@ -196,7 +210,7 @@ body.chrome #photoprism .search-results .result {
     transition-duration: 15ms !important;
     margin: 4px !important;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, .2), 0 0 0 0 rgba(0, 0, 0, .14), 0 0 0 0 rgba(0, 0, 0, .12) !important;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 #photoprism .search-results .image-container {
@@ -249,7 +263,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .mosaic-view .result.image i,
 #photoprism .list-view .result .image i,
 #photoprism .cards-view .result .image i {
-  color: white;
+  color: #e2e2e2;
   font-size: 24px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -288,7 +302,7 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .cards-view .result.is-selected,
 #photoprism .mosaic-view .result.is-selected {
-    margin: 0 !important;
+    margin: 1px !important;
     box-shadow: 0 6px 6px -3px rgba(0, 0, 0, .2), 0 10px 14px 1px rgba(0, 0, 0, .14), 0 4px 18px 3px rgba(0, 0, 0, .12) !important;
 }
 
@@ -331,6 +345,8 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .search-results .result .input-favorite .select-off,
 #photoprism .search-results .result.is-favorite .input-favorite .select-on,
+#photoprism .search-results .result .input-private .select-off,
+#photoprism .search-results .result.is-private .input-private .select-on,
 #photoprism .search-results .result .input-hidden .select-off,
 #photoprism .search-results .result.is-hidden .input-hidden .select-on {
     display: inline-flex;
@@ -338,6 +354,8 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .search-results .result .input-favorite .select-on,
 #photoprism .search-results .result.is-favorite .input-favorite .select-off,
+#photoprism .search-results .result .input-private .select-on,
+#photoprism .search-results .result.is-private .input-private .select-off,
 #photoprism .search-results .result .input-hidden .select-on,
 #photoprism .search-results .result.is-hidden .input-hidden .select-off {
     display: none;
@@ -455,23 +473,28 @@ body.chrome #photoprism .search-results .result {
     text-align: left;
 }
 
+#photoprism .cards-view .card .card-details {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
 #photoprism .cards-view .v-card .card-details {
     z-index: 1;
     position: relative;
 }
 
-#photoprism .cards-view .v-card.is-selected .card-details {
+#photoprism .cards-view .card.is-selected .card-details {
     color: #fff;
-    background-color: #333;
+    background-color: #424142;
 }
 
-#photoprism .cards-view .v-card.is-selected .card-details .v-icon {
-    color: #fff;
+#photoprism .cards-view .card.is-selected,
+#photoprism .cards-view .card.is-selected .card-background {
+    background-color: #424142 !important;
 }
 
-#photoprism .cards-view .v-card.is-selected,
-#photoprism .cards-view .v-card.is-selected .card-background {
-    background-color: #333 !important;
+#photoprism .cards-view .card.is-selected .card-details .v-icon {
+    color: #fff;
 }
 
 #photoprism .search-results.list-view .input-select,

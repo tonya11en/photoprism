@@ -35,9 +35,9 @@
       >
         <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
              :data-uid="photo.UID"
-             class="accent lighten-3 result placeholder"
+             class="card result placeholder"
         >
-          <div class="accent lighten-2 image"/>
+          <div class="card darken-1 image"/>
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px"/>
           <div class="pa-3 card-details">
             <div>
@@ -73,17 +73,15 @@
           </div>
         </div>
         <div v-else
-              tile
               :data-id="photo.ID"
               :data-uid="photo.UID"
-              class="result accent lighten-3"
+              class="result card"
               :class="photo.classes()"
               @contextmenu.stop="onContextMenu($event, index)">
-          <div class="card-background accent lighten-3"></div>
+          <div class="card-background card"></div>
           <div :key="photo.Hash"
-                :alt="photo.Title"
                 :title="photo.Title"
-                class="accent lighten-2 clickable image"
+                class="card darken-1 clickable image"
                 :style="`background-image: url(${photo.thumbnailUrl('tile_500')})`"
                 @touchstart.passive="input.touchStart($event, index)"
                 @touchend.stop.prevent="onClick($event, index)"
@@ -105,10 +103,11 @@
                   @touchend.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
                   @touchmove.stop.prevent
                   @click.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')">
-                <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
+                <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">raw_on</i>
                 <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
-                <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
                 <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
+                <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
+                <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')">font_download</i>
                 <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
             </button>
 
@@ -161,7 +160,7 @@
           <v-card-actions v-if="!isSharedView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
             <v-layout row wrap align-center>
               <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="accent lighten-2"
+                <v-btn color="card darken-1"
                       small depressed dark block :round="false"
                       class="action-archive text-xs-center"
                       :title="$gettext('Archive')" @click.stop="photo.archive()">
@@ -169,7 +168,7 @@
                 </v-btn>
               </v-flex>
               <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="accent lighten-2"
+                <v-btn color="card darken-1"
                       small depressed dark block :round="false"
                       class="action-approve text-xs-center"
                       :title="$gettext('Approve')" @click.stop="photo.approve()">
@@ -209,6 +208,11 @@
                   <i>gif_box</i>
                   {{ photo.getVideoInfo() }}
                 </button>
+                <button v-else-if="photo.Type === 'vector'" :title="$gettext('Vector')"
+                        @click.exact="openPhoto(index)">
+                  <i>font_download</i>
+                  {{ photo.getVectorInfo() }}
+                </button>
                 <button v-else :title="$gettext('Camera')" class="action-camera-edit"
                         :data-uid="photo.UID" @click.exact="editPhoto(index)">
                   <i>photo_camera</i>
@@ -243,7 +247,7 @@ import download from "common/download";
 import Notify from "common/notify";
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 import {virtualizationTools} from 'common/virtualization-tools';
-import IconLivePhoto from "component/icon/live_photo.vue";
+import IconLivePhoto from "component/icon/live-photo.vue";
 
 export default {
   name: 'PPhotoCards',

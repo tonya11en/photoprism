@@ -1,15 +1,10 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-31 12:20+0000\n"
-"PO-Revision-Date: 2022-11-01 13:23+0100\n"
-"Last-Translator: Michael Mayer <michael@photoprism.org>\n"
+"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"PO-Revision-Date: 2023-02-09 13:13+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: none\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -17,15 +12,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: messages.go:94
-msgid "Unexpected error, please try again"
-msgstr "Несподівана помилка, будь ласка, спробуйте ще раз"
+msgid "Something went wrong, try again"
+msgstr "Щось пішло не так, спробуйте ще раз"
 
 #: messages.go:95
-msgid "Invalid request"
-msgstr "Невірний запит"
+msgid "Unable to do that"
+msgstr "Неможливо це зробити"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -118,7 +113,7 @@ msgstr "Завантаження може бути образливим"
 
 #: messages.go:118
 msgid "Upload failed"
-msgstr "Помилка завантаження"
+msgstr "Помилка вивантаження"
 
 #: messages.go:119
 msgid "No items selected"
@@ -188,7 +183,7 @@ msgstr "Ваш обліковий запис не вдалося підключ�
 
 #: messages.go:137
 msgid "Changes successfully saved"
-msgstr "Зміни збережено вдало"
+msgstr "Зміни успішно збережено"
 
 #: messages.go:138
 msgid "Album created"
@@ -263,7 +258,7 @@ msgstr "Пароль змінено"
 #: messages.go:154
 #, c-format
 msgid "Import completed in %d s"
-msgstr "Імпортування завершиться протягом %d с"
+msgstr "Імпортування тривало %d с"
 
 #: messages.go:155
 msgid "Import canceled"
@@ -272,7 +267,7 @@ msgstr "Імпортування скасовано"
 #: messages.go:156
 #, c-format
 msgid "Indexing completed in %d s"
-msgstr "Індексування завершиться протягом %d с"
+msgstr "Індексування тривало %d с"
 
 #: messages.go:157
 msgid "Indexing originals..."
@@ -376,3 +371,9 @@ msgstr "Остаточно видалено"
 #, c-format
 msgid "%s has been restored"
 msgstr "%s було відновлено"
+
+#~ msgid "Invalid request"
+#~ msgstr "Невірний запит"
+
+#~ msgid "Unexpected error, please try again"
+#~ msgstr "Несподівана помилка, будь ласка, спробуйте ще раз"

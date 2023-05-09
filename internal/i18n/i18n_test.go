@@ -24,7 +24,7 @@ func TestMsg(t *testing.T) {
 
 	t.Run("unexpected error", func(t *testing.T) {
 		msg := Msg(ErrUnexpected, "A cat")
-		assert.Equal(t, "Unexpected error, please try again", msg)
+		assert.Equal(t, "Something went wrong, try again", msg)
 	})
 
 	t.Run("already exists german", func(t *testing.T) {
@@ -63,7 +63,7 @@ func TestError(t *testing.T) {
 
 	t.Run("unexpected error", func(t *testing.T) {
 		err := Error(ErrUnexpected, "A cat")
-		assert.EqualError(t, err, "Unexpected error, please try again")
+		assert.EqualError(t, err, "Something went wrong, try again")
 	})
 
 	t.Run("already exists german", func(t *testing.T) {
@@ -73,5 +73,23 @@ func TestError(t *testing.T) {
 		SetLocale("")
 		errDefault := Error(ErrAlreadyExists, "A cat")
 		assert.EqualError(t, errDefault, "A cat already exists")
+	})
+}
+
+func TestLower(t *testing.T) {
+	t.Run("ErrAlreadyExists", func(t *testing.T) {
+		msg := Lower(ErrAlreadyExists, "Eine Katze")
+		assert.Equal(t, "eine katze already exists", msg)
+		SetLocale("de")
+		errGerman := Lower(ErrAlreadyExists, "Eine Katze")
+		assert.Equal(t, errGerman, "eine katze already exists")
+		SetLocale("")
+		errDefault := Lower(ErrAlreadyExists, "Eine Katze")
+		assert.Equal(t, errDefault, "eine katze already exists")
+	})
+
+	t.Run("ErrForbidden", func(t *testing.T) {
+		msg := Lower(ErrForbidden, "A cat")
+		assert.Equal(t, "permission denied", msg)
 	})
 }

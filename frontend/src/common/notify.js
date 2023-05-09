@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -76,11 +76,14 @@ const Notify = {
       }
     });
   },
-  blockUI: function () {
+  blockUI: function (className) {
     const el = document.getElementById("busy-overlay");
 
     if (el) {
       el.style.display = "block";
+      if (className) {
+        el.className = className;
+      }
     }
   },
   unblockUI: function () {
@@ -88,9 +91,13 @@ const Notify = {
 
     if (el) {
       el.style.display = "none";
+      el.className = "";
     }
   },
   wait: function () {
+    this.info($gettext("Please wait…"));
+  },
+  busy: function () {
     this.warn($gettext("Busy, please wait…"));
   },
 };

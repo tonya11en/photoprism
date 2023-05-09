@@ -11,7 +11,8 @@ type SearchPhotos struct {
 	Query     string    `form:"q"`
 	Scope     string    `form:"s" serialize:"-" example:"s:ariqwb43p5dh9h13" notes:"Limits the results to one album or another scope, if specified"`
 	Filter    string    `form:"filter" serialize:"-" notes:"-"`
-	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Search for specific files or photos, only exact matches"`
+	ID        string    `form:"id" example:"id:123e4567-e89b-..." notes:"Finds pictures by Exif UID, XMP Document ID or Instance ID"`
+	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Limits results to the specified internal unique IDs"`
 	Type      string    `form:"type" example:"type:raw" notes:"Media Type (image, video, raw, live, animated); OR search with |"`
 	Path      string    `form:"path" example:"path:2020/Holiday" notes:"Path Name, OR search with |, supports * wildcards"`
 	Folder    string    `form:"folder" example:"folder:\"*/2020\"" notes:"Path Name, OR search with |, supports * wildcards"` // Alias for Path
@@ -40,7 +41,7 @@ type SearchPhotos struct {
 	Archived  bool      `form:"archived" notes:"Finds archived pictures"`
 	Public    bool      `form:"public" notes:"Excludes private pictures"`
 	Private   bool      `form:"private" notes:"Finds private pictures"`
-	Favorite  bool      `form:"favorite" notes:"Finds pictures marked as favorite"`
+	Favorite  bool      `form:"favorite" notes:"Finds favorites only"`
 	Unsorted  bool      `form:"unsorted" notes:"Finds pictures not in an album"`
 	Lat       float32   `form:"lat" notes:"Latitude (GPS Position)"`
 	Lng       float32   `form:"lng" notes:"Longitude (GPS Position)"`
@@ -60,7 +61,8 @@ type SearchPhotos struct {
 	Year      string    `form:"year" example:"year:1990|2003" notes:"Year Number, OR search with |"`                                                                                                                  // Moments
 	Month     string    `form:"month" example:"month:7|10" notes:"Month (1-12), OR search with |"`                                                                                                                    // Moments
 	Day       string    `form:"day" example:"day:3|13" notes:"Day of Month (1-31), OR search with |"`                                                                                                                 // Moments
-	Face      string    `form:"face" example:"face:PN6QO5INYTUSAATOFL43LL2ABAV5ACZG" notes:"Face ID"`                                                                                                                 // UIDs
+	Face      string    `form:"face" example:"face:PN6QO5INYTUSAATOFL43LL2ABAV5ACZG" notes:"Face ID, yes, no, new, or kind"`                                                                                          // UIDs
+	Faces     string    `form:"faces" example:"faces:yes faces:3" notes:"Minimum number of Faces (yes = 1)"`                                                                                                          // Find or exclude faces if detected.
 	Subject   string    `form:"subject" example:"subject:\"Jane Doe & John Doe\"" notes:"Alias for person"`                                                                                                           // UIDs
 	Person    string    `form:"person" example:"person:\"Jane Doe & John Doe\"" notes:"Subject Names, exact matches, can be combined with & and |"`                                                                   // Alias for Subject
 	Subjects  string    `form:"subjects" example:"subjects:\"Jane & John\"" notes:"Alias for people"`                                                                                                                 // People names
@@ -68,7 +70,6 @@ type SearchPhotos struct {
 	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`                                                                                                         // Album UIDs or name
 	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names, can be combined with & and |"`                                                                                   // Multi search with and/or
 	Color     string    `form:"color" example:"color:\"red|blue\"" notes:"Color Name (purple, magenta, pink, red, orange, gold, yellow, lime, green, teal, cyan, blue, brown, white, grey, black), OR search with |"` // Main color
-	Faces     string    `form:"faces" example:"faces:yes faces:3" notes:"Minimum number of Faces (yes = 1)"`                                                                                                          // Find or exclude faces if detected.
 	Quality   int       `form:"quality" notes:"Quality Score (0-7)"`                                                                                                                                                  // Photo quality score
 	Review    bool      `form:"review" notes:"Finds pictures in review"`                                                                                                                                              // Find photos in review
 	Camera    string    `form:"camera" example:"camera:canon" notes:"Camera Make/Model Name"`                                                                                                                         // Camera UID or name

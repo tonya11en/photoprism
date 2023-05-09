@@ -50,6 +50,32 @@ func usersAddAction(ctx *cli.Context) error {
 			frm.UserName = clean.Username(res)
 		}
 
+		// Check if account exists but is deleted.
+		if frm.UserName == "" {
+			return fmt.Errorf("username is required")
+		} else if m := entity.FindUserByName(frm.UserName); m != nil {
+			if !m.Deleted() {
+				return fmt.Errorf("user already exists")
+			}
+
+			prompt := promptui.Prompt{
+				Label:     fmt.Sprintf("Restore user %s?", m.String()),
+				IsConfirm: true,
+			}
+
+			if _, err := prompt.Run(); err != nil {
+				return fmt.Errorf("user already exists")
+			}
+
+			if err := m.RestoreFromCli(ctx, frm.Password); err != nil {
+				return err
+			}
+
+			log.Infof("user %s has been restored", m.String())
+
+			return nil
+		}
+
 		if interactive && frm.UserEmail == "" {
 			prompt := promptui.Prompt{
 				Label: "Email",
@@ -64,10 +90,10 @@ func usersAddAction(ctx *cli.Context) error {
 			frm.UserEmail = clean.Email(res)
 		}
 
-		if interactive && len(ctx.String("password")) < entity.LenPasswordMin {
+		if interactive && len(ctx.String("password")) < entity.PasswordLength {
 			validate := func(input string) error {
-				if len(input) < entity.LenPasswordMin {
-					return fmt.Errorf("password must have at least %d characters", entity.LenPasswordMin)
+				if len(input) < entity.PasswordLength {
+					return fmt.Errorf("password must have at least %d characters", entity.PasswordLength)
 				}
 				return nil
 			}

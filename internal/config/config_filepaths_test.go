@@ -25,14 +25,24 @@ func TestConfig_SidecarPath(t *testing.T) {
 
 func TestConfig_UsersPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Contains(t, c.UsersPath(), "testdata/users")
+	assert.Contains(t, c.UsersPath(), "users")
 }
 
-func TestConfig_UserPath(t *testing.T) {
+func TestConfig_UsersOriginalsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "", c.UserPath(""))
-	assert.Equal(t, "", c.UserPath("etaetyget"))
-	assert.Contains(t, c.UserPath("urjult03ceelhw6k"), "testdata/users/urjult03ceelhw6k")
+	assert.Contains(t, c.UsersOriginalsPath(), "users")
+}
+
+func TestConfig_UsersStoragePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.UsersStoragePath(), "users")
+}
+
+func TestConfig_UserStoragePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "", c.UserStoragePath(""))
+	assert.Equal(t, "", c.UserStoragePath("etaetyget"))
+	assert.Contains(t, c.UserStoragePath("urjult03ceelhw6k"), "users/urjult03ceelhw6k")
 }
 
 func TestConfig_UserUploadPath(t *testing.T) {
@@ -50,12 +60,12 @@ func TestConfig_UserUploadPath(t *testing.T) {
 	if dir, err := c.UserUploadPath("urjult03ceelhw6k", ""); err != nil {
 		t.Fatal(err)
 	} else {
-		assert.Contains(t, dir, "testdata/users/urjult03ceelhw6k/upload")
+		assert.Contains(t, dir, "users/urjult03ceelhw6k/upload")
 	}
 	if dir, err := c.UserUploadPath("urjult03ceelhw6k", "foo"); err != nil {
 		t.Fatal(err)
 	} else {
-		assert.Contains(t, dir, "testdata/users/urjult03ceelhw6k/upload/foo")
+		assert.Contains(t, dir, "users/urjult03ceelhw6k/upload/foo")
 	}
 }
 
@@ -420,4 +430,27 @@ func TestConfig_MysqldumpBin(t *testing.T) {
 func TestConfig_SqliteBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Contains(t, c.SqliteBin(), "sqlite")
+}
+
+func TestConfig_SettingsYamlDefaults(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	name1 := c.SettingsYamlDefaults(c.SettingsYaml())
+	t.Logf("(1) DefaultsYaml: %s", c.DefaultsYaml())
+	t.Logf("(1) SettingsYaml: %s", c.SettingsYaml())
+	t.Logf("(1) SettingsYamlDefaults: %s", name1)
+	assert.Equal(t, c.SettingsYaml(), name1)
+	c.options.ConfigPath = "/tmp/012345678ABC"
+	c.options.DefaultsYaml = "testdata/etc/defaults.yml"
+	name2 := c.SettingsYamlDefaults("")
+	t.Logf("(2) DefaultsYaml: %s", c.DefaultsYaml())
+	t.Logf("(2) SettingsYaml: %s", c.SettingsYaml())
+	t.Logf("(2) SettingsYamlDefaults: %s", name2)
+	assert.True(t, strings.HasSuffix(name2, "testdata/etc/settings.yml"))
+	name3 := c.SettingsYamlDefaults(c.SettingsYaml())
+	t.Logf("(3) DefaultsYaml: %s", c.DefaultsYaml())
+	t.Logf("(3) SettingsYaml: %s", c.SettingsYaml())
+	t.Logf("(3) SettingsYamlDefaults: %s", name3)
+	assert.True(t, strings.HasSuffix(name3, "testdata/etc/settings.yml"))
+	assert.NotEqual(t, c.SettingsYaml(), name1)
+	assert.NotEqual(t, c.SettingsYaml(), name3)
 }

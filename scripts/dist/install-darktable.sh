@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# Installs Darktable on Linux
+# This installs Darktable on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-darktable.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
-# abort if not executed as root
+# Abort if not executed as root.
 if [[ $(id -u) != "0" ]]; then
   echo "Usage: run ${0##*/} as root" 1>&2
   exit 1
@@ -39,7 +39,6 @@ case $DESTARCH in
       apt-get update
       apt-get -qq install -t buster-backports darktable
     else
-      echo "install-darktable: installing standard amd64 (Intel 64-bit) package"
       apt-get -qq install darktable
     fi
     ;;
@@ -52,7 +51,6 @@ case $DESTARCH in
       apt-get update
       apt-get -qq install -t buster-backports darktable
     else
-      echo "install-darktable: installing standard arm64 (ARM 64-bit) package"
       apt-get -qq install darktable
     fi
     ;;

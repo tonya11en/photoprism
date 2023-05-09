@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2022 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://photoprism.app/trademark>
+    <https://www.photoprism.app/trademark>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -33,6 +33,7 @@ import { config } from "app/session";
 export class User extends RestModel {
   getDefaults() {
     return {
+      ID: 0,
       UID: "",
       UUID: "",
       AuthProvider: "",
@@ -101,6 +102,7 @@ export class User extends RestModel {
         CreatedAt: "",
         UpdatedAt: "",
       },
+      LoginAt: "",
       VerifiedAt: "",
       ConsentAt: "",
       BornAt: "",
@@ -110,6 +112,31 @@ export class User extends RestModel {
     };
   }
 
+  getHandle() {
+    if (!this.Name) {
+      return "";
+    }
+
+    const s = this.Name.split("@");
+    return s[0].trim();
+  }
+
+  defaultBasePath() {
+    const handle = this.getHandle();
+
+    if (!handle) {
+      return "";
+    }
+
+    let dir = config.get("usersPath");
+
+    if (dir) {
+      return `${dir}/${handle}`;
+    } else {
+      return `users/${handle}`;
+    }
+  }
+
   getDisplayName() {
     if (this.DisplayName) {
       return this.DisplayName;
@@ -117,22 +144,16 @@ export class User extends RestModel {
       return this.Details.NickName;
     } else if (this.Details && this.Details.GivenName) {
       return this.Details.GivenName;
-    } else if (this.Role) {
-      return T(Util.capitalize(this.Role));
-    } else if (this.Details && this.Details.JobTitle) {
-      return this.Details.JobTitle;
-    } else if (this.Email) {
-      return this.Email;
     } else if (this.Name) {
-      return `@${this.Name}`;
+      return T(Util.capitalize(this.Name));
     }
 
-    return $gettext("Unregistered");
+    return $gettext("Unknown");
   }
 
   getAccountInfo() {
     if (this.Name) {
-      return `@${this.Name}`;
+      return this.Name;
     } else if (this.Email) {
       return this.Email;
     } else if (this.Details && this.Details.JobTitle) {
@@ -190,17 +211,15 @@ export class User extends RestModel {
     );
   }
 
+  isRemote() {
+    return this.AuthProvider && this.AuthProvider === "ldap";
+  }
+
   changePassword(oldPassword, newPassword) {
     return Api.put(this.getEntityResource() + "/password", {
       old: oldPassword,
       new: newPassword,
     }).then((response) => Promise.resolve(response.data));
-  }
-
-  save() {
-    return Api.post(this.getEntityResource(), this.getValues()).then((response) =>
-      Promise.resolve(this.setValues(response.data))
-    );
   }
 
   static getCollectionResource() {
