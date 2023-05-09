@@ -154,20 +154,26 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg
 // AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.
 func (c *Convert) AvcBitrate(f *MediaFile) string {
 	const defaultBitrate = "8M"
+	const minBitrate = 8
 
 	if f == nil {
 		return defaultBitrate
 	}
 
 	limit := c.conf.FFmpegBitrate()
-	quality := 12
+	quality := 24
 
 	bitrate := int(math.Ceil(float64(f.Width()*f.Height()*quality) / 1000000))
+
+	log.Infof("@tallen transcoding bitrate %dMb/s, width=%d, height=%d", bitrate, f.Width(), f.Height())
 
 	if bitrate <= 0 {
 		return defaultBitrate
 	} else if bitrate > limit {
 		bitrate = limit
+	} else if bitrate < minBitrate {
+		log.Infof("@tallen bitrate %d is below min %d, setting to min", bitrate, minBitrate)
+		bitrate = 5
 	}
 
 	return fmt.Sprintf("%dM", bitrate)

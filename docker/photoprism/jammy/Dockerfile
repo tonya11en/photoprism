@@ -20,7 +20,8 @@ RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
 #### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
-FROM photoprism/develop:jammy-slim
+#FROM photoprism/develop:jammy
+FROM ubuntu:jammy
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
@@ -95,6 +96,7 @@ COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 # Update pre-installed packages.
 RUN apt-get update && \
     apt-get -qq upgrade && \
+    apt-get install -y libva-dev && \
     /scripts/cleanup.sh
 
 # Default working directory.
@@ -105,6 +107,8 @@ EXPOSE 2342 2443
 
 # Copy app files.
 COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+
+RUN apt-get update && apt-get install -y libva-dev vainfo ffmpeg mesa-va-drivers make exiftool rawtherapee darktable libheif-examples
 
 # Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]
